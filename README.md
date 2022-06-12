@@ -7,3 +7,4 @@ additional line
 
 just another line typed in Pycharm IDE
 
+This line from IDE too
