@@ -12,3 +12,9 @@ cd is a shell builtin \
 pstree -p \
 ответ systemd \
 ![](img/systemd.png)
+
+4 \
+откроем вторую ssh сессию через `vagrant ssh` \
+запросим через ls несуществующий каталог \
+запуск в первом терминале `ls /tmp/qqqqqq 2>/dev/pts/1` приведет к выводу на втором\
+ls: cannot access '/tmp/qqqqqq': No such file or directory
