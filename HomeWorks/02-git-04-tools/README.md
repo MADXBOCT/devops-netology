@@ -38,7 +38,7 @@ dd01a3507 Update CHANGELOG.md \
 видим строчку +func providerSource(services *disco.Disco) getproviders.Source { \
 проверяем `git show 5af1e6234` внутри ищем /providerSource видим что функцию переписали
 -func providerSource(services *disco.Disco) getproviders.Source {
-+func providerSource(configs []*cliconfig.ProviderInstallation, services *disco.Disco) (getproviders.Source, tfdiags.Diagnostics) {
++func providerSource(configs []*cliconfig.ProviderInstallation, services *disco.Disco) (getproviders.Source, tfdiags.Diagnostics) { \
 ответ \
 commit 8c928e83589d90a031f811fae52a81be7153e82f
 
