@@ -1,21 +1,21 @@
 1 \
-git show aefea 
+`git show aefea`
 
 commit aefead2207ef7e2aa5dc81a34aedf0cad4c32545
 Update CHANGELOG.md
 
 2 \
-git show 85024d3
+`git show 85024d3`
 
 commit 85024d3100126de36331c6982bfaac02cdab9e76 (tag: v0.12.23)
 
 3 \
-git show --pretty=format:'%P' b8d720
+`git show --pretty=format:'%P' b8d720`
 
 2родителя, 56cd7859e05c36c06b56d013b55a252d0bb7e158 9ea88f22fc6269854151c571162c5bcf958bee2b
 
 4 \
-git log  v0.12.23..v0.12.24  --oneline
+`git log  v0.12.23..v0.12.24  --oneline`
 
 33ff1c03b (tag: v0.12.24) v0.12.24 \
 b14b74c49 [Website] vmc provider links \
@@ -29,17 +29,17 @@ dd01a3507 Update CHANGELOG.md \
 225466bc3 Cleanup after v0.12.23 release
 
 5 \
-git log -S'func providerSource' --oneline \
+`git log -S'func providerSource' --oneline` \
 вернет 2 хеша \
 5af1e6234 main: Honor explicit provider_installation CLI config when present \
 8c928e835 main: Consult local directories as potential mirrors of providers \
-смотрим нижний
-git show 8c928e835 внутри ищем /providerSource
-видим строчку +func providerSource(services *disco.Disco) getproviders.Source {
-проверяем git show 5af1e6234 внутри ищем /providerSource видим что функцию переписали
+смотрим нижний \
+`git show 8c928e835` внутри ищем /providerSource
+видим строчку +func providerSource(services *disco.Disco) getproviders.Source { \
+проверяем `git show 5af1e6234` внутри ищем /providerSource видим что функцию переписали
 -func providerSource(services *disco.Disco) getproviders.Source {
 +func providerSource(configs []*cliconfig.ProviderInstallation, services *disco.Disco) (getproviders.Source, tfdiags.Diagnostics) {
-ответ
+ответ \
 commit 8c928e83589d90a031f811fae52a81be7153e82f
 
 6 \
