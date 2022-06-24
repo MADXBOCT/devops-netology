@@ -20,8 +20,9 @@ end
 8.1 
 HISTSIZE задается максимальное число строк в текущей сессии, команда history, строки 637-639 \
 HISTFILESIZE задается максимальное число строк файла ~/.bash_history, куда сохраняется history после завершения сесии, строки 627-630  
-<span style="color:red"> обратил внимание что номера строк могут отличаться в зависимости от версии bash! отличаются в моих линуксах на virtual 
-box и на виртуалке с м1)\
+
+!_ обратил внимание что номера строк могут отличаться в зависимости от версии bash! отличаются в моих линуксах на virtual 
+box и на виртуалке с м1) _!
 
 8.2 ignoreboth - если установлено это значение будут выполняться условия ignorespace и ignoredups, в историю не будут записываться команды, 
 если введен проблел в начале И в историю не будут сохранятся одинаковые повторяющиеся команды \
@@ -47,18 +48,18 @@ echo ${month[3]}
 11 \
 конструкция `[[ -d /tmp ]]` проверит наличие каталога tmp в корне и вернет 1 или 0 в зависимости от результата
 
-12 \
+12
 - создать каталог new_path_directory в tmp
 - скопировать туда бинарник bash, чтобы было на что ссылаться
 - вызвать переменную PATH и дописать в нее новый путь с присвоением значения в эту же переменную
 
-vagrant@ubuntu:~$ mkdir /tmp/new_path_dir/ \
-vagrant@ubuntu:~$ cp /bin/bash /tmp/new_path_dir/ \
-vagrant@ubuntu:~$ PATH=/tmp/new_path_dir/:$PATH \
-vagrant@ubuntu:~$ type -a bash \
-bash is /tmp/new_path_dir/bash \
-bash is /usr/bin/bash \
-bash is /bin/bash \
+`vagrant@ubuntu:~$ mkdir /tmp/new_path_dir/` \
+`vagrant@ubuntu:~$ cp /bin/bash /tmp/new_path_dir/` \
+`vagrant@ubuntu:~$ PATH=/tmp/new_path_dir/:$PATH` \
+`vagrant@ubuntu:~$ type -a bash` \
+`bash is /tmp/new_path_dir/bash` \
+`bash is /usr/bin/bash` \
+`bash is /bin/bash ` \
 
 13 \
 at - запуск команды в назначенное время
