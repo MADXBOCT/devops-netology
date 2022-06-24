@@ -11,4 +11,4 @@ cd is a shell builtin \
 3 \
 pstree -p \
 ответ systemd \
-![qqqq](img/systemd.png)
+![](img/systemd.png)
