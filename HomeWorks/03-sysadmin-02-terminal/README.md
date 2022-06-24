@@ -20,9 +20,9 @@ pstree -p \
 ls: cannot access '/tmp/qqqqqq': No such file or directory
 
 5 \
-получится. создадим файл, поместим в него текст, направим файл на подсчет кол-ва строк а результат запишем в другой файл
-`vagrant@ubuntu:/tmp$ echo "hello world"> file.txt`
-`vagrant@ubuntu:/tmp$ wc -l <file.txt >out.txt`
+получится. создадим файл, поместим в него текст, направим файл на подсчет кол-ва строк а результат запишем в другой файл \
+`vagrant@ubuntu:/tmp$ echo "hello world"> file.txt` \
+`vagrant@ubuntu:/tmp$ wc -l <file.txt >out.txt` \
 `vagrant@ubuntu:/tmp$ cat out.txt` \
 `1`
 
