@@ -56,12 +56,12 @@ bdfea50cc James Bardin \
 5ac311e2a Martin Atkins \
 
 смотрим нижний \
-git show 5ac311e2a \
-ищем /synchronizedWriters \
+`git show 5ac311e2a` \
+ищем `/synchronizedWriters` \
 +func synchronizedWriters(targets ...io.Writer) []io.Writer { \
 
-проверяем git show bdfea50cc \
-щем /synchronizedWriters \
+проверяем `git show bdfea50cc` \
+щем `/synchronizedWriters` \
 -func synchronizedWriters(targets ...io.Writer) []io.Writer {
 
 commit 5ac311e2a91e381e2f52234668b49ba670aa0fe5 \
