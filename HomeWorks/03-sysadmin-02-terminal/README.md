@@ -33,6 +33,10 @@ ls: cannot access '/tmp/qqqqqq': No such file or directory
 9 \
 10 \
 11 \
+`grep sse /proc/cpuinfo` \
+macmini: SSE4.2, apple air m1: конечно там нет sse инструкций, вывод сильно отличается
+
+
 12 \
 13 \
 14 \
