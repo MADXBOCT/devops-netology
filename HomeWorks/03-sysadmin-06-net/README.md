@@ -8,4 +8,10 @@ HTTP/1.1 301 Moved Permanently \
 дольше всех работал запрос, вызывающий analytics.js \
 ![webload](img/webload.png)
 
+3 \
+213.87.154.249 \
+
+4 \
+
+
 
