@@ -9,10 +9,10 @@ HTTP/1.1 301 Moved Permanently \
 ![webload](img/webload.png)
 
 3 \
-213.87.154.249 \
+213.87.154.249
 
 4 \
-провайдер MTS \
+провайдер MTS, AS8359
 
 
 
