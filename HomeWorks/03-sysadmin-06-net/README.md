@@ -51,9 +51,112 @@ vagrant@ubuntu:~$
 ```
 
 4 \
-провайдер MTS, AS8359
+провайдер MTS, AS8359 \
+`sudo apt install whois` -  ставим утилиту
+```bash
+vagrant@ubuntu:~$ curl ifconfig.co | xargs whois
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    15  100    15    0     0     48      0 --:--:-- --:--:-- --:--:--    48
+% This is the RIPE Database query service.
+% The objects are in RPSL format.
+%
+% The RIPE Database is subject to Terms and Conditions.
+% See http://www.ripe.net/db/support/db-terms-conditions.pdf
 
-5 \
+% Note: this output has been filtered.
+%       To receive output for a database update, use the "-B" flag.
+
+% Information related to '213.87.128.0 - 213.87.159.255'
+
+% Abuse contact for '213.87.128.0 - 213.87.159.255' is 'abuse@mtu.ru'
+
+inetnum:        213.87.128.0 - 213.87.159.255
+netname:        MTSGPRS-3
+descr:          Mobile subscribers pool
+remarks:        INFRA-AW
+country:        RU
+admin-c:        MTU1-RIPE
+tech-c:         MTU1-RIPE
+admin-c:        MTSA
+tech-c:         MTSN
+status:         ASSIGNED PA
+mnt-by:         MTSNET-MNT
+mnt-by:         MTU-NOC
+mnt-routes:     MTSNET-MNT
+mnt-routes:     MTU-NOC
+created:        2015-08-25T13:07:29Z
+last-modified:  2015-08-25T13:07:29Z
+source:         RIPE
+
+role:           MTSNET Administration
+address:        MTS PJSC
+address:        4, Marksistskaya str., 109147 Moscow, Russia
+remarks:        **************************************
+remarks:        Contact addresses:
+remarks:        routing & peering noc@mtu.ru
+remarks:        spam & security abuse@mtu.ru
+remarks:        mail postmaster@mtu.ru
+remarks:        ddos reports ddos-reports@mtu.ru
+remarks:        **************************************
+mnt-by:         MTSNET-MNT
+admin-c:        YUF-RIPE
+tech-c:         YUF-RIPE
+nic-hdl:        MTSA
+created:        2004-04-03T10:05:17Z
+last-modified:  2019-05-29T08:19:05Z
+source:         RIPE # Filtered
+
+role:           MTSNET NOC
+address:        MTS PJSC
+address:        4, Marksistskaya str.
+address:        109147 Moscow, Russia
+remarks:        abuse-mailbox: info@mts.ru
+admin-c:        YUF-RIPE
+tech-c:         YUF-RIPE
+nic-hdl:        MTSN
+created:        2004-04-03T09:50:46Z
+last-modified:  2018-08-22T11:56:16Z
+source:         RIPE # Filtered
+mnt-by:         MTSNET-MNT
+
+role:           MTS backbone NOC
+address:        PJSC MTS / former CJSC Comstar-Direct
+address:        Petrovsky blvd 12, bldg 3
+address:        P.O. BOX 4711 127051
+address:        Moscow, Russia
+remarks:        **************************************
+remarks:        Contact addresses:
+remarks:        routing & peering noc@mtu.ru
+remarks:        spam & security abuse@mtu.ru
+remarks:        mail postmaster@mtu.ru
+remarks:        ddos reports ddos-reports@mtu.ru
+remarks:        **************************************
+phone:          +7 495 721-34-99
+fax-no:         +7 495 956-07-07
+admin-c:        EDA-RIPE
+admin-c:        RPS-RIPE
+tech-c:         EDA-RIPE
+nic-hdl:        MTU1-RIPE
+mnt-by:         MTU-NOC
+created:        2002-10-18T13:29:19Z
+last-modified:  2022-04-08T13:50:05Z
+source:         RIPE # Filtered
+
+% Information related to '213.87.144.0/20AS8359'
+
+route:          213.87.144.0/20
+descr:          Mobile TeleSystems, PJSC, NAT for GPRS/3G
+origin:         AS8359
+mnt-by:         MTSNET-MNT
+mnt-by:         MTU-NOC
+created:        2015-08-25T13:08:40Z
+last-modified:  2015-08-25T13:08:40Z
+source:         RIPE
+
+% This query was served by the RIPE Database Query Service version 1.103 (BLAARKOP)
+```
+5 
 ```bash
 vagrant@ubuntu:~$ traceroute -An 8.8.8.8
 traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
@@ -79,6 +182,11 @@ traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
 20  8.8.8.8 [AS15169]  1063.659 ms  1077.824 ms  1092.254 ms
 ```
 6 \
+Худшие delay: \
+Last - в последнем пакете хоп 10 \
+Avg - по среднему значению хоп 8 \
+Wrst - по наихудшему за время работы хоп 8 \
+![webload](img/delay.png)
 
 7 \
 
