@@ -78,6 +78,77 @@ iface vlan100 inet static
   - 1 L3+L4 вычисляется src_port, src_ip, dst_port, dst_ip 
   - 2 L3 + L2 вычисляется src_ip, dst_ip, src_mac, dst_mac
 - mode=3 (broadcast) передача осуществляется во все интерфейсы, достигается только отказоустойчивость
-- mode=4 (802.3ad) динамический режим, участвуют все интерфейсы и порты со стороны коммутатора, группа собирается автоматически, используется та же настройка хеширования xmit_hash_policy что и в mode=2 
-- mode=5 (balance-tlb) 
-- mode=6 (balance-alb)
+- mode=4 (802.3ad) динамический режим, участвуют все интерфейсы и порты со стороны коммутатора, группа собирается автоматически, используется та же настройка хеширования xmit_hash_policy что и в mode=2, требует от коммутатора настройки
+- mode=5 (balance-tlb) Adaptive transmit load balancing, не требует специфичной настройки на коммутаторе. Входящие пакеты принимаются только активным сетевым интерфейсом, исходящий распределяется в зависимости от текущей загрузки каждого интерфейса.
+- mode=6 (balance-alb) Тоже самое что 5, только входящий трафик тоже распределяется между интерфейсами. Не требует настройки коммутатора
+
+вносим изменеия в уже знакомый нам файл кофигурации `/etc/network/interfaces`
+```bash
+iface bond0 inet static
+address 10.0.0.5
+netmask 255.255.255.0
+network 10.0.0.0
+gateway 10.0.0.254
+bond_mode balance-tlb
+bond_miimon 100
+bond_downdelay 200
+bond_updelay 200
+slaves eth0 eth1
+```
+
+5 \
+В сети с маской /29, всего 8 адресов, из них устроствам можно присвоить 6 \
+в /24 сети будет 256/8=32 подсети с маской /29 \
+```bash
+vagrant@ubuntu:~$ ipcalc -b --split 6 6 6 6 10.0.0.0/24
+Address:   10.0.0.0             
+Netmask:   255.255.255.0 = 24   
+Wildcard:  0.0.0.255            
+=>
+Network:   10.0.0.0/24          
+HostMin:   10.0.0.1             
+HostMax:   10.0.0.254           
+Broadcast: 10.0.0.255           
+Hosts/Net: 254                   Class A, Private Internet
+
+1. Requested size: 6 hosts
+Netmask:   255.255.255.248 = 29 
+Network:   10.0.0.0/29          
+HostMin:   10.0.0.1             
+HostMax:   10.0.0.6             
+Broadcast: 10.0.0.7             
+Hosts/Net: 6                     Class A, Private Internet
+
+2. Requested size: 6 hosts
+Netmask:   255.255.255.248 = 29 
+Network:   10.0.0.8/29          
+HostMin:   10.0.0.9             
+HostMax:   10.0.0.14            
+Broadcast: 10.0.0.15            
+Hosts/Net: 6                     Class A, Private Internet
+
+3. Requested size: 6 hosts
+Netmask:   255.255.255.248 = 29 
+Network:   10.0.0.16/29         
+HostMin:   10.0.0.17            
+HostMax:   10.0.0.22            
+Broadcast: 10.0.0.23            
+Hosts/Net: 6                     Class A, Private Internet
+
+4. Requested size: 6 hosts
+Netmask:   255.255.255.248 = 29 
+Network:   10.0.0.24/29         
+HostMin:   10.0.0.25            
+HostMax:   10.0.0.30            
+Broadcast: 10.0.0.31            
+Hosts/Net: 6                     Class A, Private Internet
+
+Needed size:  32 addresses.
+Used network: 10.0.0.0/27
+Unused:
+10.0.0.32/27
+10.0.0.64/26
+10.0.0.128/25
+```
+
+6 \
