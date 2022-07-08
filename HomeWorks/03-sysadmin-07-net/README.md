@@ -152,3 +152,40 @@ Unused:
 ```
 
 6 \
+Воспользуемся 4-ым зарезервированным диапазоном 100.64.0.0 — 100.127.255.255
+```bash
+vagrant@ubuntu:~$ ipcalc -b --split 50 100.64.0.0/24
+Address:   100.64.0.0           
+Netmask:   255.255.255.0 = 24   
+Wildcard:  0.0.0.255            
+=>
+Network:   100.64.0.0/24        
+HostMin:   100.64.0.1           
+HostMax:   100.64.0.254         
+Broadcast: 100.64.0.255         
+Hosts/Net: 254                   Class A
+
+1. Requested size: 50 hosts
+Netmask:   255.255.255.192 = 26 
+Network:   100.64.0.0/26        
+HostMin:   100.64.0.1           
+HostMax:   100.64.0.62          
+Broadcast: 100.64.0.63          
+Hosts/Net: 62                    Class A
+
+Needed size:  64 addresses.
+Used network: 100.64.0.0/26
+Unused:
+100.64.0.64/26
+100.64.0.128/25
+```
+
+7 \
+Linux: \
+- посмотреть таблицу можно командами `ip neighbour` или `arp`
+- удаление специфичной записи `ip neigh del <ip> dev <interface>` или `arp -d <ip_address>`
+- удаление всех записей `ip neigh flush all`, утилитой arp весь кэш почистить нельзя
+Win:
+- посмотреть таблицу можно командами `arp -a`
+- удаление специфичной записи `arp -d <ip_address>`
+- удаление всех записей `arp -d`
