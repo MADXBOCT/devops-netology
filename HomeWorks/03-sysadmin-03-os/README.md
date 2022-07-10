@@ -80,4 +80,31 @@ PID    COMM               FD ERR PATH
 
 ```
 6 \
+системный вызов uname() \
+```bash
+vagrant@ubuntu:~$ strace uname -a
+uname({sysname="Linux", nodename="ubuntu", ...}) = 0
+fstat(1, {st_mode=S_IFCHR|0600, st_rdev=makedev(0x88, 0x1), ...}) = 0
+uname({sysname="Linux", nodename="ubuntu", ...}) = 0
+uname({sysname="Linux", nodename="ubuntu", ...}) = 0
+write(1, "Linux ubuntu 5.4.0-92-generic #1"..., 109Linux ubuntu 5.4.0-92-generic #103-Ubuntu SMP Fri Nov 26 16:15:10 UTC 2021 aarch64 aarch64 aarch64 GNU/Linux
+) = 109
+close(1)                                = 0
+close(2)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
+```
+uname 2 мануала нет на виртуалке, нашел в интернете
+https://man7.org/linux/man-pages/man2/uname.2.html \
+`Part of the utsname information is also accessible via
+       /proc/sys/kernel/{ostype, hostname, osrelease, version,
+       domainname}.`
+
+7 \
+;  разделяет последовательность команд, выполнится вся послндовательность и неважно с каким результом успешно или с ошибкой \
+&& в данном случае echo hi отработает если первая команда будет иметь успех (если tmp/some_dir существует) \
+нет смысла использовать set -e так как выполнение последоавтелности прервется когда первая команда test -d /tmp/some_dir вернет значение 1
+
+8 \
+
 
