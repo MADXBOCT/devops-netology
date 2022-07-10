@@ -29,3 +29,28 @@ openat(AT_FDCWD, "/etc/magic.mgc", O_RDONLY) = -1 ENOENT (No such file or direct
 openat(AT_FDCWD, "/etc/magic", O_RDONLY) = 3
 openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
 ```
+3 \
+примерно воспроизвести ситуацию можно так: запускаем редактор с файлом `vim qqq`, записываем несколько произвольных символов и сохраняем :w\
+открываем второй терминал, находим pid vi 103803 \
+```bash
+vagrant@ubuntu:~$ ps aux | grep vi
+vagrant   103803  0.0  0.4  21272  8960 pts/0    S+   17:31   0:00 vi qqq
+```
+находим скрытый временный файл и удаляем его
+```bash
+vagrant@ubuntu:~$ lsof -p 103803
+vi      103803 vagrant    4u   REG  253,0    12288 532037 /home/vagrant/.qqq.swp
+vagrant@ubuntu:~$ rm /home/vagrant/.qqq.swp
+vagrant@ubuntu:~$ lsof -p 103803
+vi      103803 vagrant    4u   REG  253,0    12288 532037 /home/vagrant/.qqq.swp (deleted)
+```
+ответ: зачищаем через файловый дескриптор 4
+```bash
+vagrant@ubuntu:~$ echo '' > /proc/103803/fd/4
+vagrant@ubuntu:~$ cat /proc/103803/fd/4
+
+```
+4 \
+Зомби процессы не занимают никакие ресурсы, только имеют запись в таблице процессов \
+
+5 \
