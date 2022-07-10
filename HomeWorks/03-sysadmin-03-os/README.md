@@ -53,7 +53,7 @@ vagrant@ubuntu:~$ cat /proc/103803/fd/4
 4 \
 Зомби процессы не занимают никакие ресурсы, только имеют запись в таблице процессов \
 
-5 \
+5 
 ```bash
 vagrant@vagrant:~$ dpkg -L bpfcc-tools | grep sbin/opensnoop
 /usr/sbin/opensnoop-bpfcc
@@ -65,3 +65,19 @@ PID    COMM               FD ERR PATH
 628    dbus-daemon        -1   2 /lib/dbus-1/system-services
 628    dbus-daemon        20   0 /var/lib/snapd/dbus-1/system-services/
 ```
+на мак с м1 утилита похоже работает не совсем корректно...
+```bash
+vagrant@ubuntu:~$ sudo /usr/sbin/opensnoop-bpfcc
+PID    COMM               FD ERR PATH
+848    irqbalance          7   0 
+848    irqbalance          7   0 
+848    irqbalance          7   0 
+739    vmtoolsd            8   0 
+739    vmtoolsd            9   0 
+739    vmtoolsd            8   0 
+739    vmtoolsd            8   0 
+739    vmtoolsd           -1   2 
+
+```
+6 \
+
