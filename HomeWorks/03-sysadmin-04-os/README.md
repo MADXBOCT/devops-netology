@@ -89,6 +89,23 @@ node_network_transmit_errs_total{device="enp1s1"} 0
 
 
 3 \
+`sudo apt install -y netdata`
+`sudo nano /etc/netdata/netdata.conf`
+добавляем секцию, тк она полностью отсуствует
+```bash
+[web]
+        default port = 19999
+        bind to = 0.0.0.0
+```
+порт проброшен
+```bash
+==> default: Waiting for the VM to receive an address...
+==> default: Forwarding ports...
+    default: -- 19999 => 19999
+    default: -- 22 => 2222
+```
+
+![](img/netdata.png)
 
 4 \
 Да можно. на apple m1 вывод следующий:
