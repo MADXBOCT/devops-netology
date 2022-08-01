@@ -58,7 +58,7 @@ vagrant@ubuntu:~$ sudo systemctl status node_exporter
              └─823 /usr/sbin/node_exporter             
 ```
 2 \
-`curl http://127.0.0.1:9100/metrics | less` \
+`curl http://127.0.0.1:9100/metrics | less`
 
 CPU:
 ```bash
@@ -113,3 +113,6 @@ node_network_transmit_errs_total{device="enp1s1"} 0
 vagrant@ubuntu:/tmp$ dmesg | grep virtual
 [    3.601256] systemd[1]: Detected virtualization vmware.
 ```
+
+5 \
+
