@@ -199,3 +199,19 @@ Refresh Epoch 1
       path 7FE032F50A68 RPKI State valid
       rx pathid: 0, tx pathid: 0
 ```
+2
+```bash
+sudo vim /etc/systemd/network/dummy0.network
+vagrant@ubuntu:~$ cat /etc/systemd/network/dummy0.network
+[Match]
+Name=dummy0
+[Network]
+Address=192.168.0.100
+Mask=255.255.255.0
+
+vagrant@ubuntu:~$ sudo vim /etc/systemd/network/dummy0.netdev
+[NetDev]
+Name=dummy0
+Kind=dummy
+
+```
