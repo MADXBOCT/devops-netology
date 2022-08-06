@@ -252,7 +252,14 @@ default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100
 192.168.50.0/24 dev dummy0 proto kernel scope link src 192.168.50.3 
 ```
 3
-
+```bash
+root@vagrant:~# ss -lp
+tcp             LISTEN           0                 128                                                             0.0.0.0:ssh                                            0.0.0.0:*                users:(("sshd",pid=703,fd=3))                                              
+tcp             LISTEN           0                 4096                                                                  *:9100                                                 *:*                users:(("node_exporter",pid=646,fd=3))                                     
+tcp             LISTEN           0                 128                                                                [::]:ssh                                               [::]:*                users:(("sshd",pid=703,fd=4))
+```
+22 порт - прослушивает SSH сервер, для удаленного подключения к виртуалке
+9100 - прослушивает node_exporter, утилита сбора метрик производительности, установлена в одной из прошлых домашних работ
 4
 ```bash
 root@vagrant:~# ss -uap
@@ -263,4 +270,9 @@ UNCONN                      0                           0                       
 ```
 127.0.0.1:8125 - пакет NetData, был установлен в одной из прошлых домашних работ \
 127.0.0.53%lo:domain - DOMAIN (Domain Name System, DNS) \
-10.0.2.15%eth0:bootpc - BOOTPC (Bootstrap Protocol Client) — для клиентов бездисковых рабочих станций, загружающихся с сервера BOOTP; также используется DHCP (Dynamic Host Configuration Protocol)
+10.0.2.15%eth0:bootpc - BOOTPC (Bootstrap Protocol Client) — для клиентов бездисковых рабочих станций, загружающихся с сервера BOOTP; также используется DHCP (Dynamic Host Configuration Protocol) \
+
+5 \
+Схема сети на работе \
+В центре Cisco DMVPN Dual-Hub. Установлен в центральном ЦОД. Все региональные офисы подключены к нему 2 ipsec туннелями для надежности. Переключение траффика осуществляется динамически протоколом EIGRP. Крупные площадки соединены дополнительно выделлеными MPLS каналами. \
+![](img/net.png)
