@@ -206,12 +206,61 @@ vagrant@ubuntu:~$ cat /etc/systemd/network/dummy0.network
 [Match]
 Name=dummy0
 [Network]
-Address=192.168.0.100
+Address=192.168.50.3
 Mask=255.255.255.0
 
 vagrant@ubuntu:~$ sudo vim /etc/systemd/network/dummy0.netdev
 [NetDev]
 Name=dummy0
 Kind=dummy
-
 ```
+после перезапуска
+```bash
+vagrant@vagrant:~$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:a2:6b:fd brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
+       valid_lft 86340sec preferred_lft 86340sec
+    inet6 fe80::a00:27ff:fea2:6bfd/64 scope link 
+       valid_lft forever preferred_lft forever
+3: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ether 7e:f5:36:7a:89:07 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.50.3/24 brd 192.168.50.255 scope global dummy0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::7cf5:36ff:fe7a:8907/64 scope link 
+       valid_lft forever preferred_lft forever
+vagrant@vagrant:~$ sudo -i
+root@vagrant:~# ip r
+default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 
+10.0.2.2 dev eth0 proto dhcp scope link src 10.0.2.15 metric 100 
+192.168.50.0/24 dev dummy0 proto kernel scope link src 192.168.50.3 
+root@vagrant:~# ip route add 172.10.1.0/24 via 10.0.2.2
+root@vagrant:~# ip route add 10.1.1.1/32 via 10.0.2.2
+root@vagrant:~# ip r
+default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100 
+10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 
+10.0.2.2 dev eth0 proto dhcp scope link src 10.0.2.15 metric 100 
+10.1.1.1 via 10.0.2.2 dev eth0 
+172.10.1.0/24 via 10.0.2.2 dev eth0 
+192.168.50.0/24 dev dummy0 proto kernel scope link src 192.168.50.3 
+```
+3
+
+4
+```bash
+root@vagrant:~# ss -uap
+State                       Recv-Q                      Send-Q                                            Local Address:Port                                             Peer Address:Port                     Process                                                        
+UNCONN                      0                           0                                                     127.0.0.1:8125                                                  0.0.0.0:*                         users:(("netdata",pid=642,fd=43))                             
+UNCONN                      0                           0                                                 127.0.0.53%lo:domain                                                0.0.0.0:*                         users:(("systemd-resolve",pid=620,fd=12))                     
+UNCONN                      0                           0                                                10.0.2.15%eth0:bootpc                                                0.0.0.0:*                         users:(("systemd-network",pid=615,fd=21)) 
+```
+127.0.0.1:8125 - пакет NetData, был установлен в одной из прошлых домашних работ \
+127.0.0.53%lo:domain - DOMAIN (Domain Name System, DNS) \
+10.0.2.15%eth0:bootpc - BOOTPC (Bootstrap Protocol Client) — для клиентов бездисковых рабочих станций, загружающихся с сервера BOOTP; также используется DHCP (Dynamic Host Configuration Protocol)
