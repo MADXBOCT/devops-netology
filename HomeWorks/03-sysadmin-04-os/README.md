@@ -1,35 +1,4 @@
 1 \
-
-качаем node_exporter, распаковываем, копируем бинарник, создаем необходимые конфиги, помещаем в автозагрузку запускаем
-```bash
-vagrant@vagrant:~$ cd /tmp/
-vagrant@vagrant:/tmp$ wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
-2022-07-11 13:51:28 (33.9 MB/s) - ‘node_exporter-1.3.1.linux-amd64.tar.gz’ saved [9033415/9033415]
-vagrant@vagrant:/tmp$ tar -xvzf ./node_exporter-1.3.1.linux-amd64.tar.gz 
-node_exporter-1.3.1.linux-amd64/
-node_exporter-1.3.1.linux-amd64/LICENSE
-node_exporter-1.3.1.linux-amd64/NOTICE
-node_exporter-1.3.1.linux-amd64/node_exporter
-vagrant@vagrant:/tmp/node_exporter-1.3.1.linux-amd64$ sudo cp node_exporter /usr/sbin/
-vagrant@vagrant:~$sudo nano /etc/systemd/system/node_exporter.service
-[Unit]
-Description=Node Exporter
-
-[Service]
-User=node_exporter
-Type=simple
-EnvironmentFile=/etc/sysconfig/node_exporter
-ExecStart=/usr/sbin/node_exporter $OPTIONS
-
-[Install]
-WantedBy=multi-user.target
-vagrant@vagrant:~$ sudo useradd -s /usr/sbin/nologin node_exporter
-vagrant@vagrant:~$ sudo mkdir -p /var/lib/node_exporter/textfile_collector
-vagrant@vagrant:~$ sudo chown node_exporter:node_exporter /var/lib/node_exporter/textfile_collector
-vagrant@vagrant:~$ sudo systemctl enable node_exporter
-vagrant@vagrant:~$ sudo start node_exporter
-```
-1 \
 качаем и распаковываем
 ```bash
 vagrant@ubuntu:~$ cd /tmp
