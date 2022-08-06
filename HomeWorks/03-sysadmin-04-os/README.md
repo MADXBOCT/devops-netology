@@ -114,5 +114,128 @@ vagrant@ubuntu:/tmp$ dmesg | grep virtual
 [    3.601256] systemd[1]: Detected virtualization vmware.
 ```
 
-5 \
+5 
+```bash
+vagrant@vagrant:~$ sysctl -n fs.nr_open
+1048576
+```
+Максимальное кол-во открытых дескрипторов, так называемое системное ограничение. \
+Другое ограничение:
+```bash
+vagrant@vagrant:~$ ulimit -Sn
+1024
+```
+S - soft - "мягкое" ограничение, применяется на пользователя; можно изменить в большую сьторону
 
+6 
+```bash
+root@vagrant:~# unshare -f --pid --mount-proc sleep 1h
+root@vagrant:~# ps ax | grep sleep
+   2030 pts/0    S      0:00 sleep 1h
+root@vagrant:~# nsenter --target 2030 --pid --mount
+root@vagrant:/# ps aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0   7228   520 pts/0    S    19:24   0:00 sleep 1h
+root           2  0.0  0.4   8960  4112 pts/0    S    19:26   0:00 -bash
+root          13  0.0  0.3  10612  3252 pts/0    R+   19:26   0:00 ps aux
+```
+7
+
+:(){ :|:& };:
+
+для понятности заменим : именем f и отформатируем код.
+```bash
+f() {
+  f | f &
+}
+f
+```
+таким образом это функция, которая параллельно пускает два своих экземпляра. Каждый пускает ещё по два и т.д.
+
+`[ 8741.064445] cgroup: fork rejected by pids controller in /user.slice/user-1000.slice/session-1.scope` \
+отработал механизм Process Number Controller в Linux Control Groups
+
+```bash
+vagrant@vagrant:~$ systemctl status user-1000.slice
+● user-1000.slice - User Slice of UID 1000
+     Loaded: loaded
+    Drop-In: /usr/lib/systemd/system/user-.slice.d
+             └─10-defaults.conf
+     Active: active since Sat 2022-08-06 17:06:38 UTC; 3h 16min ago
+       Docs: man:user@.service(5)
+      Tasks: 8 (limit: 2345)
+     Memory: 120.1M
+     CGroup: /user.slice/user-1000.slice
+             ├─session-1.scope
+             │ ├─ 1296 sshd: vagrant [priv]
+             │ ├─ 1342 sshd: vagrant@pts/0
+             │ ├─ 1343 -bash
+             │ ├─ 2030 sleep 1h
+             │ ├─44741 systemctl status user-1000.slice
+             │ └─44742 pager
+             └─user@1000.service
+               └─init.scope
+                 ├─1308 /lib/systemd/systemd --user
+                 └─1309 (sd-pam)
+```    
+таким образом находим limit: 2345
+пробуем разобраться откуда взялось это число
+```bash
+vagrant@vagrant:~$ cat /usr/lib/systemd/system/user-.slice.d/10-defaults.conf
+#  SPDX-License-Identifier: LGPL-2.1+
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=User Slice of UID %j
+Documentation=man:user@.service(5)
+After=systemd-user-sessions.service
+StopWhenUnneeded=yes
+
+[Slice]
+TasksMax=33%
+```
+по-умолчанию `TasksMax=33%`, который задается либо числом либо процентом от общесистемного лимита
+
+
+команда `sudo systemctl set-property user-1000.slice TasksMax=500` позволяет переопределить это значение
+```bash
+vagrant@vagrant:~$ systemctl status user-1000.slice
+● user-1000.slice - User Slice of UID 1000
+     Loaded: loaded
+    Drop-In: /usr/lib/systemd/system/user-.slice.d
+             └─10-defaults.conf
+             /etc/systemd/system.control/user-1000.slice.d
+             └─50-TasksMax.conf
+     Active: active since Sat 2022-08-06 17:06:38 UTC; 3h 26min ago
+       Docs: man:user@.service(5)
+      Tasks: 7 (limit: 500)
+```
+
+Другой вариант ограничения - ulimit \
+по-умолчанию пользователю разрешается запстить не более 3554 процесса
+```bash
+vagrant@vagrant:~$ ulimit -a
+core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 0
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 3554
+max locked memory       (kbytes, -l) 65536
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 1024
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 0
+stack size              (kbytes, -s) 8192
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 3554
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
+```
+установить другое значение `ulimit -u`
