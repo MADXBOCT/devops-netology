@@ -1,7 +1,8 @@
 # -*- mode: ruby -*-
 
-ISO = "bytesguy/ubuntu-server-20.04-arm64"
-ISO_VER = "1.0.0"
+ISO_X64 = "bytesguy/ubuntu-server-20.04-arm64"
+ISO_ARM64 = "bento/ubuntu-20.04"
+#ISO_VER = "1.0.0"
 NET = "192.168.56."
 DOMAIN = ".netology"
 HOST_PREFIX = "server"
@@ -17,6 +18,32 @@ servers = [
     :core => 1
   }
 ]
+
+def is_arm64()
+  `uname -m` == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0"
+end
+
+def x86_64()
+  `uname -m` == "x86_64"
+end
+
+def is_arm64()
+  `uname -m` == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0"
+end
+
+Vagrant.configure('2') do |config|
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+  servers.each do |machine|
+    config.vm.define machine[:hostname] do |node|
+      if is_arm64()
+        config.vm.box = ISO_X64
+        #config.vm.box_version = '1.0.0'
+      elsif `uname -m` == "x86_64"
+        config.vm.box = ISO_X64
+      end
+      node.vm.hostname = machine[:hostname]
+  ...
+end
 
 Vagrant.configure(2) do |config|
   config.vm.synced_folder ".", "/vagrant", disabled: false
