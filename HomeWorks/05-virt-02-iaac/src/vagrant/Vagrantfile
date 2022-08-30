@@ -2,7 +2,7 @@
 
 ISO_X64 = "bytesguy/ubuntu-server-20.04-arm64"
 ISO_ARM64 = "bento/ubuntu-20.04"
-#ISO_VER = "1.0.0"
+ISO_ARM_VER = "1.0.0"
 NET = "192.168.56."
 DOMAIN = ".netology"
 HOST_PREFIX = "server"
@@ -23,12 +23,12 @@ def is_arm64()
   `uname -m` == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0"
 end
 
-def x86_64()
+def is_x86_64()
   `uname -m` == "x86_64"
 end
 
-def is_arm64()
-  `uname -m` == "arm64" || `/usr/bin/arch -64 sh -c "sysctl -in sysctl.proc_translated"`.strip() == "0"
+def is_vb()
+  `[[ -a /usr/local/bin/VirtualBox ]]`
 end
 
 Vagrant.configure('2') do |config|
@@ -36,36 +36,34 @@ Vagrant.configure('2') do |config|
   servers.each do |machine|
     config.vm.define machine[:hostname] do |node|
       if is_arm64()
-        config.vm.box = ISO_X64
-        #config.vm.box_version = '1.0.0'
-      elsif `uname -m` == "x86_64"
+        config.vm.box = ISO_ARM64
+        config.vm.box_version = ISO_ARM_VER
+      elsif is_x86_64()
         config.vm.box = ISO_X64
       end
       node.vm.hostname = machine[:hostname]
-  ...
-end
-
-Vagrant.configure(2) do |config|
-  config.vm.synced_folder ".", "/vagrant", disabled: false
-  servers.each do |machine|
-    config.vm.define machine[:hostname] do |node|
-      node.vm.box = ISO
-      config.vm.box_version = ISO_VER
-      node.vm.hostname = machine[:hostname]
       node.vm.network "private_network", ip: machine[:ip]
       node.vm.network :forwarded_port, guest: machine[:ssh_vm], host: machine[:ssh_host]
-      node.vm.provider :vmware_desktop do |vmware|
-        vmware.memory = machine[:ram]
-        vmware.cpus = machine[:core]
-        vmware.gui = true
-        vmware.vmx["ethernet0.pcislotnumber"] = "160"
+      if is_vb()
+        node.vm.provider "virtualbox" do |vb|
+          vb.customize ["modifyvm", :id, "--memory", machine[:ram]]
+          vb.customize ["modifyvm", :id, "--cpus", machine[:core]]
+          vb.name = machine[:hostname]
+        end
+      else 
+        node.vm.provider :vmware_desktop do |vmware|
+          vmware.memory = machine[:ram]
+          vmware.cpus = machine[:core]
+          vmware.gui = true
+          vmware.vmx["ethernet0.pcislotnumber"] = "160"
+        end
       end
       node.vm.provision "ansible" do |setup|
         setup.inventory_path = INVENTORY_PATH
         setup.playbook = "../ansible/provision.yml"
         setup.become = true
         setup.extra_vars = { ansible_user: 'vagrant' }
-       end
+      end
     end
   end
 end
