@@ -1,6 +1,7 @@
 1 \
 
 https://hub.docker.com/repository/docker/madxboct/devops-netology
+решение тег 0.4
 
 2 \
 
@@ -51,3 +52,7 @@ root@0593314d736f:/data# ls
 qqq1.txt  qqq2.txt
 root@0593314d736f:/data#
 ```
+
+4 \
+https://hub.docker.com/repository/docker/madxboct/devops-netology
+не очень красиво получилось конечно. в одном репозитории 2 разных продукта с разными тегами. тег 0.6 решение 4 задания.
