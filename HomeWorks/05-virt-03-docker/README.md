@@ -21,7 +21,8 @@ https://hub.docker.com/repository/docker/madxboct/devops-netology
 - MongoDB, как основное хранилище данных для java-приложения;
 можно и в докере, для хранения данных нужно обязательно подключить volume.
 - Gitlab сервер для реализации CI/CD процессов и приватный (закрытый) Docker Registry.
-gitlab можно в докере, нужно пробросить 3 volume: config, logs, data; есть один важный момент! для получения почтовых уведомлений придется встраивать Mail Transfer Agent в тот же контейнер
+gitlab можно в докере, нужно пробросить 3 volume: config, logs, data; \
+docker registry можно в докере; при локальном бэкэнде так же не забыть volume
 
 3 \
 
