@@ -3,3 +3,4 @@
 .DS_Store
 .DS_Store?
 **/.DS_Store
+/HomeWorks/05-virt-04-docker-compose/src/terraform/.terraform/

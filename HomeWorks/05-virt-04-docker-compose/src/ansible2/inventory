@@ -1,0 +1,5 @@
+[nodes:children]
+manager
+
+[manager]
+node02.netology.cloud ansible_host=158.160.9.234 ansible_user=centos
