@@ -12,6 +12,8 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
+    ports:
+      - "9100:9100/tcp"
     command:
       - '--path.procfs=/host/proc'
       - '--path.rootfs=/rootfs'
@@ -26,6 +28,8 @@ services:
   cadvisor:
     image: gcr.io/google-containers/cadvisor:v0.34.0
     container_name: cadvisor
+    ports:
+      - "8080:8080/tcp"
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw

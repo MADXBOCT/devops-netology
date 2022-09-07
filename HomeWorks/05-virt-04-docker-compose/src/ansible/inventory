@@ -2,4 +2,4 @@
 manager
 
 [manager]
-node01.netology.cloud ansible_host=158.160.9.43 ansible_user=centos
+node01.netology.cloud ansible_host=51.250.23.218 ansible_user=centos

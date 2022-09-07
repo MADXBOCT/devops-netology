@@ -1,8 +1,9 @@
 # -*- mode: ruby -*-
 
-ISO_X64 = "bytesguy/ubuntu-server-20.04-arm64"
-ISO_ARM64 = "bento/ubuntu-20.04"
+ISO_ARM64 = "bytesguy/ubuntu-server-20.04-arm64"
 ISO_ARM_VER = "1.0.0"
+ISO_X64 = "bento/ubuntu-20.04"
+
 NET = "192.168.56."
 DOMAIN = ".netology"
 HOST_PREFIX = "server"
@@ -36,10 +37,10 @@ Vagrant.configure('2') do |config|
   servers.each do |machine|
     config.vm.define machine[:hostname] do |node|
       if is_arm64()
-        config.vm.box = ISO_ARM64
-        config.vm.box_version = ISO_ARM_VER
+        node.vm.box = 'bytesguy/ubuntu-server-20.04-arm64'
+        config.vm.box_version = '1.0.0'
       elsif is_x86_64()
-        config.vm.box = ISO_X64
+        node.vm.box = 'bento/ubuntu-20.04'
       end
       node.vm.hostname = machine[:hostname]
       node.vm.network "private_network", ip: machine[:ip]
