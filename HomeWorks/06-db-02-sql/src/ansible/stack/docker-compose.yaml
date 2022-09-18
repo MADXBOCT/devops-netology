@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - vol_data:/var/lib/postgresql/data
+      - vol_bkup:/var/lib/postgresql/bkup
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
