@@ -19,7 +19,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: example
     volumes:
-      - /opt/mysql/vol_data:/etc/mysql/
+      - /opt/mysql/vol_data:/var/lib/mysql
     ports:
       - "3306:3306"
     restart: unless-stopped
