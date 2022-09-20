@@ -6,15 +6,6 @@
     remote_user: vagrant
 
     tasks:
-      #- name: Create directory for ssh-keys
-      #  file: state=directory mode=0700 dest=/root/.ssh/
-
-      #- name: Adding rsa-key in /root/.ssh/authorized_keys
-      # copy: src=~/.ssh/id_rsa.pub dest=/root/.ssh/authorized_keys owner=root mode=0600
-      #  ignore_errors: yes
-
-      - name: Checking DNS
-        command: host -t A google.com
 
       - name: Installing tools
         apt: >
@@ -40,7 +31,32 @@
           mode: 0644
         become: true
 
-      - name: Folder init
+      - name: Folder init 1
+        file:
+          path: /opt/pg/vol_data
+          state: directory
+          owner: root
+          group: root
+          mode: 0775
+          recurse: yes
+
+      - name: Folder init 2
+        file:
+          path: /opt/pg/vol_bkup
+          state: directory
+          owner: root
+          group: root
+          mode: 0775
+          recurse: yes
+
+      - name: Folder init 3
+        file:
+          path: /opt/mysql/vol_data
+          state: directory
+          owner: root
+          group: root
+          mode: 0775
+          recurse: yes
 
       - name: Pull all images in compose
         command: docker compose -f /opt/stack/docker-compose.yaml pull

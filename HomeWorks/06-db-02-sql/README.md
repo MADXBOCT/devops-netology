@@ -1,3 +1,5 @@
+1
+```bash
 version: "3.9"
 services:
   postgres:
@@ -11,15 +13,6 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+```
 
-  mysql:
-    image: mysql:8
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-    volumes:
-      - /opt/mysql/vol_data:/etc/mysql/
-    ports:
-      - "3306:3306"
-    restart: unless-stopped
+2

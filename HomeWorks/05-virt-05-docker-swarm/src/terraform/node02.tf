@@ -1,19 +1,26 @@
 resource "yandex_compute_instance" "node02" {
   name                      = "node02"
-  zone                      = "ru-central1-a"
+  zone                      = "ru-central1-b"
   hostname                  = "node02.netology.yc"
   allow_stopping_for_update = true
 
   resources {
-    cores  = 4
-    memory = 8
+    cores  = 2
+    memory = 1
+    core_fraction = 5
+  }
+
+  platform_id = "standard-v2"
+
+  scheduling_policy {
+preemptible = true
   }
 
   boot_disk {
     initialize_params {
       image_id    = "${var.centos-7-base}"
       name        = "root-node02"
-      type        = "network-nvme"
+      type        = "network-ssd"
       size        = "10"
     }
   }
@@ -25,6 +32,6 @@ resource "yandex_compute_instance" "node02" {
   }
 
   metadata = {
-    ssh-keys = "centos:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys = "centos:${file("~/.ssh/ya-cloud.pub")}"
   }
 }
