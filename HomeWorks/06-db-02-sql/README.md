@@ -36,6 +36,36 @@ postgres=# \l
 
 postgres=#
 
+
+
+CREATE TABLE orders 
+(
+id integer PRIMARY KEY,
+name text, 
+price integer 
+);
+
+CREATE TABLE clients 
+(
+	id integer PRIMARY KEY,
+	lastname text,
+	country text,
+	booking integer,
+	FOREIGN KEY (booking) REFERENCES orders (Id)
+);
+
+CREATE ROLE "test-admin-user" SUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN;
+
+CREATE ROLE "test-simple-user" NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN;
+GRANT SELECT ON TABLE public.clients TO "test-simple-user";
+GRANT INSERT ON TABLE public.clients TO "test-simple-user";
+GRANT UPDATE ON TABLE public.clients TO "test-simple-user";
+GRANT DELETE ON TABLE public.clients TO "test-simple-user";
+GRANT SELECT ON TABLE public.orders TO "test-simple-user";
+GRANT INSERT ON TABLE public.orders TO "test-simple-user";
+GRANT UPDATE ON TABLE public.orders TO "test-simple-user";
+GRANT DELETE ON TABLE public.orders TO "test-simple-user";
+
 ```
 3
 
