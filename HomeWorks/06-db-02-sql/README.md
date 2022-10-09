@@ -35,23 +35,25 @@ postgres=# \l
 (4 rows)
 
 postgres=#
+```
 
-
-
-CREATE TABLE orders 
-(
-id integer PRIMARY KEY,
-name text, 
-price integer 
+CREATE TABLE orders (
+	id integer,
+	name text, 
+	price integer,
+	PRIMARY KEY (id)
 );
 
 CREATE TABLE clients 
 (
-	id integer PRIMARY KEY,
+	id integer,
 	lastname text,
 	country text,
-	booking integer,
-	FOREIGN KEY (booking) REFERENCES orders (Id)
+	order integer, 
+	PRIMARY KEY (id),
+	CONSTAIT fk_order
+		FOREIGN KEY (order) 
+			REFERENCES orders (id)
 );
 
 CREATE ROLE "test-admin-user" SUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN;
