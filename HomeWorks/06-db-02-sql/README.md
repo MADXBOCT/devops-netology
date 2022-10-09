@@ -127,6 +127,7 @@ test_db=# select * from information_schema.table_privileges where grantee like '
 (8 rows)
 
 test_db=# 
+
 ```
 3
 
