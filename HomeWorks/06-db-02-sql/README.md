@@ -20,22 +20,13 @@ vagrant@server1:~$ docker exec -it stack-postgres-1 bash
 root@e90b7ce73bee:/# psql -U postgres
 psql (12.12 (Debian 12.12-1.pgdg110+1))
 Type "help" for help.
+```
+```bash
 postgres=# create database test_db;
 CREATE DATABASE
-postgres=# \l
-                                 List of databases
-   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
------------+----------+----------+------------+------------+-----------------------
- postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
- template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
-           |          |          |            |            | postgres=CTc/postgres
- template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
-           |          |          |            |            | postgres=CTc/postgres
- test_db   | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
-(4 rows)
-
-postgres=#
-```
+postgres=# \c test_db
+You are now connected to database "test_db" as user "postgres".
+test_db=#
 
 CREATE TABLE orders (
 	id integer,
@@ -49,16 +40,17 @@ CREATE TABLE clients
 	id integer,
 	lastname text,
 	country text,
-	order integer, 
+	order_id integer, 
 	PRIMARY KEY (id),
-	CONSTAIT fk_order
-		FOREIGN KEY (order) 
+		FOREIGN KEY (order_id) 
 			REFERENCES orders (id)
 );
 
-CREATE ROLE "test-admin-user" SUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN;
+CREATE ROLE "test-admin-user" LOGIN;
+GRANT ALL ON public.clients TO "test-admin-user";
+GRANT ALL ON public.orders TO "test-admin-user";
 
-CREATE ROLE "test-simple-user" NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN;
+CREATE ROLE "test-simple-user" LOGIN;
 GRANT SELECT ON TABLE public.clients TO "test-simple-user";
 GRANT INSERT ON TABLE public.clients TO "test-simple-user";
 GRANT UPDATE ON TABLE public.clients TO "test-simple-user";
@@ -67,7 +59,74 @@ GRANT SELECT ON TABLE public.orders TO "test-simple-user";
 GRANT INSERT ON TABLE public.orders TO "test-simple-user";
 GRANT UPDATE ON TABLE public.orders TO "test-simple-user";
 GRANT DELETE ON TABLE public.orders TO "test-simple-user";
+```
 
+```bash
+postgres=# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ test_db   | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
+(4 rows)
+test_db=# 
+test_db=# \du
+                                       List of roles
+    Role name     |                         Attributes                         | Member of 
+------------------+------------------------------------------------------------+-----------
+ postgres         | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+ test-admin-user  |                                                            | {}
+ test-simple-user |                                                            | {}
+
+test_db=# 
+test_db=# \dt
+          List of relations
+ Schema |  Name   | Type  |  Owner   
+--------+---------+-------+----------
+ public | clients | table | postgres
+ public | orders  | table | postgres
+(2 rows)
+
+test_db=#
+test_db=# select * from information_schema.table_privileges where grantee like 'test-admin-user';
+ grantor  |     grantee     | table_catalog | table_schema | table_name | privilege_type | is_grantable | with_hierarchy 
+----------+-----------------+---------------+--------------+------------+----------------+--------------+----------------
+ postgres | test-admin-user | test_db       | public       | clients    | INSERT         | NO           | NO
+ postgres | test-admin-user | test_db       | public       | clients    | SELECT         | NO           | YES
+ postgres | test-admin-user | test_db       | public       | clients    | UPDATE         | NO           | NO
+ postgres | test-admin-user | test_db       | public       | clients    | DELETE         | NO           | NO
+ postgres | test-admin-user | test_db       | public       | clients    | TRUNCATE       | NO           | NO
+ postgres | test-admin-user | test_db       | public       | clients    | REFERENCES     | NO           | NO
+ postgres | test-admin-user | test_db       | public       | clients    | TRIGGER        | NO           | NO
+ postgres | test-admin-user | test_db       | public       | orders     | INSERT         | NO           | NO
+ postgres | test-admin-user | test_db       | public       | orders     | SELECT         | NO           | YES
+ postgres | test-admin-user | test_db       | public       | orders     | UPDATE         | NO           | NO
+ postgres | test-admin-user | test_db       | public       | orders     | DELETE         | NO           | NO
+ postgres | test-admin-user | test_db       | public       | orders     | TRUNCATE       | NO           | NO
+ postgres | test-admin-user | test_db       | public       | orders     | REFERENCES     | NO           | NO
+ postgres | test-admin-user | test_db       | public       | orders     | TRIGGER        | NO           | NO
+(14 rows)
+
+test_db=# 
+
+test_db=# select * from information_schema.table_privileges where grantee like 'test-simple-user';
+ grantor  |     grantee      | table_catalog | table_schema | table_name | privilege_type | is_grantable | with_hierarchy 
+----------+------------------+---------------+--------------+------------+----------------+--------------+----------------
+ postgres | test-simple-user | test_db       | public       | clients    | INSERT         | NO           | NO
+ postgres | test-simple-user | test_db       | public       | clients    | SELECT         | NO           | YES
+ postgres | test-simple-user | test_db       | public       | clients    | UPDATE         | NO           | NO
+ postgres | test-simple-user | test_db       | public       | clients    | DELETE         | NO           | NO
+ postgres | test-simple-user | test_db       | public       | orders     | INSERT         | NO           | NO
+ postgres | test-simple-user | test_db       | public       | orders     | SELECT         | NO           | YES
+ postgres | test-simple-user | test_db       | public       | orders     | UPDATE         | NO           | NO
+ postgres | test-simple-user | test_db       | public       | orders     | DELETE         | NO           | NO
+(8 rows)
+
+test_db=# 
 ```
 3
 
