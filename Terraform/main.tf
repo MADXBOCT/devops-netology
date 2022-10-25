@@ -1,7 +1,12 @@
 provider "yandex" {
-  service_account_key_file = ""
-  cloud_id                 = "b1gemhkf41iej5re9eov"
-  folder_id                = "b1gqdc5g77am21vlmc7a"
+ # service_account_key_file = ""
+ # cloud_id                 = ""
+ # folder_id                = ""
+ # export YC_TOKEN=$(yc iam create-token)
+ # export YC_CLOUD_ID=$(yc config get cloud-id)
+ # export YC_FOLDER_ID=$(yc config get folder-id)
+
+zone = "ru-central1-b"
 }
 
 # Network
@@ -11,15 +16,18 @@ resource "yandex_vpc_network" "default" {
 
 resource "yandex_vpc_subnet" "default" {
   name = "subnet"
-  zone           = "ru-central1-b"
-  network_id     = ""
+  network_id     = "${yandex_vpc_network.default.id}"
   v4_cidr_blocks = ["192.168.101.0/24"]
 }
 
-resource "yandex_compute_instance" "my_tf_server1" {
-  name                      = "my_tf_server1"
-  zone                      = "ru-central1-b"
-  hostname                  = "my_tf_server1.netology.yc"
+#image
+data "yandex_compute_image" "ubuntu_image" {
+  family = "ubuntu-2204-lts"
+}
+
+resource "yandex_compute_instance" "my-tf-server1" {
+  name                      = "my-tf-server1"
+  hostname                  = "my-tf-server1.netology.yc"
   allow_stopping_for_update = true
 
   resources {
@@ -36,8 +44,7 @@ preemptible = true
 
   boot_disk {
     initialize_params {
-      image_id    = ""
-      name        = "root-node01"
+      image_id    = data.yandex_compute_image.ubuntu_image.id
       type        = "network-ssd"
       size        = "10"
     }
@@ -50,6 +57,6 @@ preemptible = true
   }
 
   metadata = {
-    ssh-keys = "centos:${file("~/.ssh/ya-cloud.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/ya-cloud.pub")}"
   }
 }
