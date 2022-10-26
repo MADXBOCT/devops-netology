@@ -1,7 +1,3 @@
-output "ya_cloud_id" {
-  value = yandex_compute_instance.my-tf-server1.
-}
-
 output "zone" {
   value = yandex_compute_instance.my-tf-server1.zone
 }
