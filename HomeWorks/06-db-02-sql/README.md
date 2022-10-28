@@ -193,12 +193,26 @@ test_db=# explain select * from clients as c where exists (select id from orders
          ->  Seq Scan on orders o  (cost=0.00..22.00 rows=1200 width=4)
 ```
 Показывает стоимость (нагрузку на исполнение) запроса, затем поrазывает шаги связи, и сканирование таблиц после связи \
-6
+6 \
+v.1
+```bash
+docker exec -t stack-postgres-1 pg_dump -U postgres test_db -f /var/lib/postgresql/bkup/backup1.sql
+docker stop stack-postgres-1
+docker run --rm -d --name stack-postgres-2 -e POSTGRES_PASSWORD=example -ti -p 5432:5432 -v /opt/pg/vol_bkup:/var/lib/postgresql/bkup postgres:12
+docker exec -it stack-postgres-1 bash
+root@dac0cdc48c81:/# psql -U postgres
+postgres=# create database test_db;
+CREATE DATABASE
+postgres=# exit
+root@dac0cdc48c81:/# exit
+exit
+docker exec -it stack-postgres-2 psql -U postgres -d test_db -f /var/lib/postgresql/bkup/backup1.sql
+```
+v.2
 ```bash
 docker exec -t stack-postgres-1 pg_dump -U postgres test_db -F c -f /var/lib/postgresql/bkup/backup1.dump
 docker stop stack-postgres-1
-docker run --rm -d --name stack-postgres-2 -e POSTGRES_PASSWORD=example -ti -p 5432:5432 postgres:12 -v /opt/pg/vol_bkup:/var/lib/postgresql/bkup
-docker exec -t stack-postgres-2 psql -U postgres dropdb test_db
-docker exec -i stack-postgres-2 pg_restore -U postgres --create --dbname test_db -f /var/lib/postgresql/bkup/backup1.dump
-
+docker run --rm -d --name stack-postgres-2 -e POSTGRES_PASSWORD=example -ti -p 5432:5432 -v /opt/pg/vol_bkup:/var/lib/postgresql/bkup postgres:12
+docker exec -it stack-postgres-2 psql -U postgres -c 'create database test_db;'
+docker exec -it stack-postgres-2 pg_restore -U postgres -d test_db /var/lib/postgresql/bkup/backup1.dump
 ```
