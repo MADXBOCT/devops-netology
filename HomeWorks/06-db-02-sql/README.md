@@ -162,3 +162,43 @@ INSERT 0 5
 
 test_db=# 
 ```
+4
+```bash
+test_db=# update  clients set order_id = 3 where id = 1;
+update  clients set order_id = 4 where id = 2;
+update  clients set order_id = 5 where id = 3;
+UPDATE 1
+UPDATE 1
+UPDATE 1
+
+test_db=# select * from clients as c where exists (select id from orders as o where c.order_id = o.id);
+ id |       lastname       | country | order_id 
+----+----------------------+---------+----------
+  1 | Иванов Иван Иванович | USA     |        3
+  2 | Петров Петр Петрович | Canada  |        4
+  3 | Иоганн Себастьян Бах | Japan   |        5
+(3 rows)
+
+test_db=# 
+```
+5
+```bash
+test_db=# explain select * from clients as c where exists (select id from orders as o where c.order_id = o.id);
+                               QUERY PLAN                               
+------------------------------------------------------------------------
+ Hash Join  (cost=37.00..57.24 rows=810 width=72)
+   Hash Cond: (c.order_id = o.id)
+   ->  Seq Scan on clients c  (cost=0.00..18.10 rows=810 width=72)
+   ->  Hash  (cost=22.00..22.00 rows=1200 width=4)
+         ->  Seq Scan on orders o  (cost=0.00..22.00 rows=1200 width=4)
+```
+Показывает стоимость (нагрузку на исполнение) запроса, затем поrазывает шаги связи, и сканирование таблиц после связи \
+6
+```bash
+docker exec -t stack-postgres-1 pg_dump -U postgres test_db -F c -f /var/lib/postgresql/bkup/backup1.dump
+docker stop stack-postgres-1
+docker run --rm -d --name stack-postgres-2 -e POSTGRES_PASSWORD=example -ti -p 5432:5432 postgres:12 -v /opt/pg/vol_bkup:/var/lib/postgresql/bkup
+docker exec -t stack-postgres-2 psql -U postgres dropdb test_db
+docker exec -i stack-postgres-2 pg_restore -U postgres --create --dbname test_db -f /var/lib/postgresql/bkup/backup1.dump
+
+```
