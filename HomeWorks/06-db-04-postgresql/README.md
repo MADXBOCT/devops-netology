@@ -12,3 +12,53 @@ services:
       - "5432:5432"
     restart: unless-stopped
 ```
+```bash
+vagrant@server1:~$ docker exec -it stack-postgres-1 bash
+root@7781504c46bb:/# psql -U postgres
+psql (13.8 (Debian 13.8-1.pgdg110+1))
+Type "help" for help.
+```
+```bash
+postgres=# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+(3 rows)
+
+postgres=# \c postgres
+You are now connected to database "postgres" as user "postgres".
+
+postgres=# \dtS
+                    List of relations
+   Schema   |          Name           | Type  |  Owner   
+------------+-------------------------+-------+----------
+ pg_catalog | pg_aggregate            | table | postgres
+ pg_catalog | pg_am                   | table | postgres
+ pg_catalog | pg_amop                 | table | postgres
+ pg_catalog | pg_amproc               | table | postgres
+ pg_catalog | pg_attrdef              | table | postgres
+ <...>
+```
+пример для `pg_am`
+```bash
+postgres=# \dS+ pg_am
+                                  Table "pg_catalog.pg_am"
+  Column   |  Type   | Collation | Nullable | Default | Storage | Stats target | Description 
+-----------+---------+-----------+----------+---------+---------+--------------+-------------
+ oid       | oid     |           | not null |         | plain   |              | 
+ amname    | name    |           | not null |         | plain   |              | 
+ amhandler | regproc |           | not null |         | plain   |              | 
+ amtype    | "char"  |           | not null |         | plain   |              | 
+Indexes:
+    "pg_am_name_index" UNIQUE, btree (amname)
+    "pg_am_oid_index" UNIQUE, btree (oid)
+Access method: heap
+
+postgres=# \q
+root@7781504c46bb:/# 
+```
