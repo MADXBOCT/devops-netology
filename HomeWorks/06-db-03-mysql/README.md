@@ -123,6 +123,7 @@ mysql> select count(*) from orders where price >300;
 +----------+
 1 row in set (0.01 sec)
 ```
+2
 ```bash
 mysql> CREATE USER 'test'@'localhost' IDENTIFIED BY 'test-pass';
 Query OK, 0 rows affected (0.06 sec)
