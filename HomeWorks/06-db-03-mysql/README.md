@@ -1,5 +1,5 @@
 1 
-```bash
+```yamlex
   mysql:
     image: mysql:8
     command: --default-authentication-plugin=mysql_native_password
@@ -198,7 +198,7 @@ mysql> SHOW PROFILES;
 ```
 4 \
 Кастомный конфиг смерджится с основным конфигом, благодаря инструкции `!includedir /etc/mysql/conf.d/` в основном конфиге. нужно просто положить с помощью ansible
-```bash
+```yamlex
   mysql:
     image: mysql:8
     command: --default-authentication-plugin=mysql_native_password

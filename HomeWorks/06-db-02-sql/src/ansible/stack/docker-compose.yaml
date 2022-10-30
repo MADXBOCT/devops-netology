@@ -1,33 +1,33 @@
 version: "3.9"
 
-configs:
-  mysql_config:
-    file: ./mysql/config-file.cnf
+#configs:
+#  mysql_config:
+#    file: ./mysql/config-file.cnf
 
 services:
   postgres:
-    image: postgres:12
+    image: postgres:13
     environment:
       PGDATA: "/var/lib/postgresql/data/pgdata"
       POSTGRES_PASSWORD: example
     volumes:
       - /opt/pg/vol_data:/var/lib/postgresql/data
-      - /opt/pg/vol_bkup:/var/lib/postgresql/bkup
+  #    - /opt/pg/vol_bkup:/var/lib/postgresql/bkup
     ports:
       - "5432:5432"
     restart: unless-stopped
 
-  mysql:
-    image: mysql:8
-    command: --default-authentication-plugin=mysql_native_password
-    configs:
-      - source: mysql_config
-        target: /etc/mysql/conf.d/config-file.cnf
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-    volumes:
-      - /opt/mysql/vol_data:/var/lib/mysql
+  #mysql:
+  #  image: mysql:8
+  #  command: --default-authentication-plugin=mysql_native_password
+  #  configs:
+  #    - source: mysql_config
+  #      target: /etc/mysql/conf.d/config-file.cnf
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: example
+  #  volumes:
+  #    - /opt/mysql/vol_data:/var/lib/mysql
     # - /opt/my/custom/config-file.cnf:/etc/mysql/conf.d
-    ports:
-      - "3306:3306"
-    restart: unless-stopped
+  #  ports:
+  #    - "3306:3306"
+  #  restart: unless-stopped
