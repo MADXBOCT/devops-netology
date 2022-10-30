@@ -1,4 +1,4 @@
-1 \
+1 
 ```bash
   mysql:
     image: mysql:8
@@ -11,6 +11,7 @@
       - "3306:3306"
     restart: unless-stopped
 ```
+Порт проброшен в виртуалку, в виртуалке проброшен в контейнер. Бэкап (убрал коменты закомментированные) развернут с помощью dbever.
 ![](img/sql.png)
 ```bash
 bash-4.4# mysql --user=root --password=example test_db
