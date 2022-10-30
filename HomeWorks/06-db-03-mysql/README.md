@@ -123,4 +123,39 @@ mysql> select count(*) from orders where price >300;
 +----------+
 1 row in set (0.01 sec)
 ```
+```bash
+mysql> CREATE USER 'test'@'localhost' IDENTIFIED BY 'test-pass';
+Query OK, 0 rows affected (0.06 sec)
 
+mysql> ALTER USER 'test'@'localhost'
+    ->   IDENTIFIED WITH mysql_native_password BY 'test_pass'
+    ->   PASSWORD EXPIRE INTERVAL 180 DAY
+    ->   FAILED_LOGIN_ATTEMPTS 3;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> ALTER USER 'test'@'localhost' WITH MAX_QUERIES_PER_HOUR 100;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> ALTER USER 'test'@'localhost' ATTRIBUTE '{"fname":"James", "lname":"Pretty"}';
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT Select ON orders TO 'test'@'localhost';
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> SHOW grants for 'test'@'localhost';
++----------------------------------------------------------+
+| Grants for test@localhost                                |
++----------------------------------------------------------+
+| GRANT USAGE ON *.* TO `test`@`localhost`                 |
+| GRANT SELECT ON `test_db`.`orders` TO `test`@`localhost` |
++----------------------------------------------------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT * FROM INFORMATION_SCHEMA.USER_ATTRIBUTES WHERE USER='test';
++------+-----------+---------------------------------------+
+| USER | HOST      | ATTRIBUTE                             |
++------+-----------+---------------------------------------+
+| test | localhost | {"fname": "James", "lname": "Pretty"} |
++------+-----------+---------------------------------------+
+1 row in set (0.01 sec)
+```
