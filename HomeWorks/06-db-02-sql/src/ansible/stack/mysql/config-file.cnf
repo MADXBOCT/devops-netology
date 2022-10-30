@@ -1,0 +1,19 @@
+#Set IO Speed
+# 0 - speed
+# 1 - safety
+# 2 - universal
+innodb_flush_log_at_trx_commit = 0
+
+#Set compression
+# Barracuda - format with compression enabled
+innodb_file_format=Barracuda
+
+#Set buffer
+innodb_log_buffer_size	= 1M
+
+#Set Cache size
+#vm mem = 1024M
+key_buffer_size = 307М
+
+#Set log size
+max_binlog_size	= 100M

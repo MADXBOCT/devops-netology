@@ -195,4 +195,42 @@ mysql> SHOW PROFILES;
 3 rows in set, 1 warning (0.02 sec)
 
 ```
-4
+4 \ 
+Кастомный конфиг смерджится с основным конфигом, благодаря инструкции `!includedir /etc/mysql/conf.d/` в основном конфиге. нужно просто положить с помощью ansible
+```bash
+  mysql:
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    configs:
+      - source: mysql_config
+        target: /etc/mysql/conf.d/config-file.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - /opt/mysql/vol_data:/var/lib/mysql
+    # - /opt/my/custom/config-file.cnf:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+```
+```bash
+#Set IO Speed
+# 0 - speed
+# 1 - safety
+# 2 - universal
+innodb_flush_log_at_trx_commit = 0
+
+#Set compression
+# Barracuda - format with compression enabled
+innodb_file_format=Barracuda
+
+#Set buffer
+innodb_log_buffer_size	= 1M
+
+#Set Cache size
+#vm mem = 1024M
+key_buffer_size = 307М
+
+#Set log size
+max_binlog_size	= 100M
+```
