@@ -62,3 +62,35 @@ Access method: heap
 postgres=# \q
 root@7781504c46bb:/# 
 ```
+2
+```bash
+postgres=# create database test_database;
+CREATE DATABASE
+postgres=# 
+```
+бэкап восстановлен черз dbeaver, порт проброшен в виртуалку, далее в контейнер
+![](img/pgsql.png)
+секция не отработала
+```text
+COPY public.orders (id, title, price) FROM stdin;
+1	War and peace	100
+2	My little database	500
+3	Adventure psql time	300
+4	Server gravity falls	300
+5	Log gossips	123
+6	WAL never lies	900
+7	Me and my bash-pet	499
+8	Dbiezdmin	501
+\.
+```
+переделал
+```text
+INSERT INTO public.orders VALUES (1,'War and peace',100),
+(2,'My little database',500),
+(3,'Adventure psql time',300),
+(4,'Server gravity falls',300),
+(5,'Log gossips',123),
+(6,'WAL never lies',900),
+(7,'Me and my bash-pet',499),
+(8,'Dbiezdmin',501);
+```
