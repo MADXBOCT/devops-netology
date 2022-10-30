@@ -196,7 +196,7 @@ mysql> SHOW PROFILES;
 3 rows in set, 1 warning (0.02 sec)
 
 ```
-4 \ 
+4 \
 Кастомный конфиг смерджится с основным конфигом, благодаря инструкции `!includedir /etc/mysql/conf.d/` в основном конфиге. нужно просто положить с помощью ansible
 ```bash
   mysql:
@@ -214,6 +214,7 @@ mysql> SHOW PROFILES;
       - "3306:3306"
     restart: unless-stopped
 ```
+`config-file.cnf`
 ```bash
 #Set IO Speed
 # 0 - speed
