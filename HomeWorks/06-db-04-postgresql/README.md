@@ -116,3 +116,18 @@ test_database=# select avg_width from pg_stats where tablename='orders';
 
 test_database=#
 ```
+3
+пересоздаем таблицу, делаем 2 партиции, наполняем данными, исходную удаляем 
+```text
+alter table public.orders rename to orders_temp;
+CREATE TABLE public.orders (
+    id integer NOT NULL,
+    title character varying(80) NOT NULL,
+    price integer DEFAULT 0
+) partition by range (price);
+create table public.orders_2 partition of public.orders for values from (0) to (499);
+create table public.orders_1 partition of public.orders for values from (499) to (999);
+insert into public.orders (id, title, price) select * from public.orders_temp;
+drop table public.orders_temp;
+```
+конечно, можно было сразу сделать ее с партициями, тогда бы не пришлось переносить данные
