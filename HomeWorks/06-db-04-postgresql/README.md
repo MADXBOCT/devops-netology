@@ -230,5 +230,5 @@ COPY public.orders_2 (id, title, price) FROM stdin;
 -- PostgreSQL database dump complete
 --
 ```
-Для уникальности можно добавить индекс. Так как бэкап представляет собой sql-код, добавить в конец файла 
+Для уникальности можно добавить индекс. Так как бэкап представляет собой sql-код, добавить в конец файла \
 `CREATE INDEX ON public.orders ((lower(title)));`
