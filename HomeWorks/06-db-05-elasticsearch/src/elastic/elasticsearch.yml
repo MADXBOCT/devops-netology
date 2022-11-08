@@ -6,3 +6,5 @@ path.logs: /var/lib/logs
 
 network.host: 0.0.0.0
 discovery.seed_hosts: ["127.0.0.1", "[::1]"]
+
+ingest.geoip.downloader.enabled: false

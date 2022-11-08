@@ -1,5 +1,5 @@
-1
-
+1 \
+Dockerfile
 ```yaml
 FROM elasticsearch:7.17.7
 COPY --chown=elasticsearch:elasticsearch elasticsearch.yml /usr/share/elasticsearch/config/
@@ -8,6 +8,21 @@ RUN mkdir /var/lib/logs \
     && mkdir /var/lib/data \
     && chown elasticsearch:elasticsearch /var/lib/data
 ```
+elasticsearch.yml
+```yaml
+cluster.name: netology_test
+discovery.type: single-node
+
+path.data: /var/lib/data
+path.logs: /var/lib/logs
+
+network.host: 0.0.0.0
+discovery.seed_hosts: ["127.0.0.1", "[::1]"]
+
+ingest.geoip.downloader.enabled: false
+```
+
+
 ```bash
 docker build --tag=madxboct/elasticsearch-custom:7.17.7 .
 docker login -u madxboct
