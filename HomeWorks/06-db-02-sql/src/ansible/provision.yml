@@ -31,35 +31,53 @@
           mode: 0644
         become: true
 
-      - name: Folder init 1
+#      - name: Folder init 1
+#        file:
+#          path: /opt/pg/vol_data
+#          state: directory
+#          owner: root
+#          group: root
+#          mode: 0775
+#          recurse: yes
+#
+#      - name: Folder init 2
+#        file:
+#          path: /opt/pg/vol_bkup
+#          state: directory
+#          owner: root
+#          group: root
+#          mode: 0775
+#          recurse: yes
+#
+#      - name: Folder init 3
+#        file:
+#          path: /opt/mysql/vol_data
+#          state: directory
+#          owner: root
+#          group: root
+#          mode: 0775
+#          recurse: yes
+
+      - name: Folder init 4
         file:
-          path: /opt/pg/vol_data
+          path: /opt/elastic/data
           state: directory
           owner: root
           group: root
-          mode: 0775
+          mode: 0777
           recurse: yes
 
-      - name: Folder init 2
+      - name: Folder init 5
         file:
-          path: /opt/pg/vol_bkup
+          path: /opt/elastic/logs
           state: directory
           owner: root
           group: root
-          mode: 0775
+          mode: 0777
           recurse: yes
 
-      - name: Folder init 3
-        file:
-          path: /opt/mysql/vol_data
-          state: directory
-          owner: root
-          group: root
-          mode: 0775
-          recurse: yes
-
-      - name: Pull all images in compose
-        command: docker compose -f /opt/stack/docker-compose.yaml pull
-
-      - name: Up all services in compose
-        command: docker compose -f /opt/stack/docker-compose.yaml up -d
+#      - name: Pull all images in compose
+#        command: docker compose -f /opt/stack/docker-compose.yaml pull
+#
+#      - name: Up all services in compose
+#        command: docker compose -f /opt/stack/docker-compose.yaml up -d

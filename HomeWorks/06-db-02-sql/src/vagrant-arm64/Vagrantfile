@@ -15,8 +15,9 @@ servers = [
     :ssh_vm => "22",
     :pg => "5432",
     :ms => "3306",
-    :ram => 1024,
-    :core => 1
+    :el => "9200",
+    :ram => 4096,
+    :core => 2
   }
 ]
 
@@ -31,11 +32,12 @@ Vagrant.configure(2) do |config|
       node.vm.network :forwarded_port, guest: machine[:ssh_vm], host: machine[:ssh_host]
       node.vm.network :forwarded_port, guest: machine[:pg], host: machine[:pg]
       node.vm.network :forwarded_port, guest: machine[:ms], host: machine[:ms]
+      node.vm.network :forwarded_port, guest: machine[:el], host: machine[:el]
       node.vm.provider :vmware_desktop do |vmware|
         vmware.memory = machine[:ram]
         vmware.cpus = machine[:core]
         vmware.gui = true
-        vmware.vmx["ethernet0.pcislotnumber"] = "160"
+ #       vmware.vmx["ethernet0.pcislotnumber"] = "160"
       end
       node.vm.provision "ansible" do |setup|
         setup.inventory_path = INVENTORY_PATH
