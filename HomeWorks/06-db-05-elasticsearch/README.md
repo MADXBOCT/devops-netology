@@ -22,7 +22,6 @@ discovery.seed_hosts: ["127.0.0.1", "[::1]"]
 ingest.geoip.downloader.enabled: false
 ```
 
-
 ```bash
 docker build --tag=madxboct/elasticsearch-custom:7.17.7 .
 docker login -u madxboct
@@ -54,4 +53,52 @@ vagrant@server1:~$ curl -X GET 'http://localhost:9200/'
 ```
 
 2
+```bash
+curl -X PUT localhost:9200/ind-1 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 1,  "number_of_replicas": 0 }}'
+curl -X PUT localhost:9200/ind-2 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 2,  "number_of_replicas": 1 }}'
+curl -X PUT localhost:9200/ind-3 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 4,  "number_of_replicas": 2 }}'
+```
+```bash
+vagrant@server1:~$ curl -X GET 'http://localhost:9200/_cat/indices?v'
+health status index uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   ind-1 VUKzZaNsQFOj9JxtPsq61w   1   0          0            0       226b           226b
+yellow open   ind-3 mYE3WQxQRRq3GGwKLJtREg   4   2          0            0       904b           904b
+yellow open   ind-2 rjKtsBvIR6uQQ2Nf5oGqLg   2   1          0            0       452b           452b
+```
+```bash
+vagrant@server1:~$ curl -X GET 'http://localhost:9200/_cluster/health?pretty'
+{
+  "cluster_name" : "netology_test",
+  "status" : "yellow",
+  "timed_out" : false,
+  "number_of_nodes" : 1,
+  "number_of_data_nodes" : 1,
+  "active_primary_shards" : 9,
+  "active_shards" : 9,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 10,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 47.368421052631575
+}
+```
+кол-во реплик для 2,3 превышает кол-вол доступных серверов (single node)
+```bash
+vagrant@server1:~$ curl -X DELETE 'http://localhost:9200/ind-1?pretty'
+{
+  "acknowledged" : true
+}
+vagrant@server1:~$ curl -X DELETE 'http://localhost:9200/ind-2?pretty'
+{
+  "acknowledged" : true
+}
+vagrant@server1:~$ curl -X DELETE 'http://localhost:9200/ind-3?pretty'
+{
+  "acknowledged" : true
+}
+vagrant@server1:~$
+```
 
