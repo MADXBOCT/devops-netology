@@ -54,9 +54,9 @@ vagrant@server1:~$ curl -X GET 'http://localhost:9200/'
 
 2
 ```bash
-curl -X PUT localhost:9200/ind-1 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 1,  "number_of_replicas": 0 }}'
-curl -X PUT localhost:9200/ind-2 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 2,  "number_of_replicas": 1 }}'
-curl -X PUT localhost:9200/ind-3 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 4,  "number_of_replicas": 2 }}'
+curl -X PUT http://localhost:9200/ind-1 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 1,  "number_of_replicas": 0 }}'
+curl -X PUT http://localhost:9200/ind-2 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 2,  "number_of_replicas": 1 }}'
+curl -X PUT http://localhost:9200/ind-3 -H 'Content-Type: application/json' -d'{ "settings": { "number_of_shards": 4,  "number_of_replicas": 2 }}'
 ```
 ```bash
 vagrant@server1:~$ curl -X GET 'http://localhost:9200/_cat/indices?v'
@@ -85,7 +85,7 @@ vagrant@server1:~$ curl -X GET 'http://localhost:9200/_cluster/health?pretty'
   "active_shards_percent_as_number" : 47.368421052631575
 }
 ```
-кол-во реплик для 2,3 превышает кол-вол доступных серверов (single node)
+кол-во реплик для 2,3 превышает кол-вол доступных серверов data node (single node)
 ```bash
 vagrant@server1:~$ curl -X DELETE 'http://localhost:9200/ind-1?pretty'
 {
@@ -101,4 +101,79 @@ vagrant@server1:~$ curl -X DELETE 'http://localhost:9200/ind-3?pretty'
 }
 vagrant@server1:~$
 ```
+3
+переделываем образ, пересобираем контейнер
+```yaml
+FROM elasticsearch:7.17.7
+COPY --chown=elasticsearch:elasticsearch elasticsearch.yml /usr/share/elasticsearch/config/
+RUN mkdir /var/lib/logs \
+    && chown elasticsearch:elasticsearch /var/lib/logs \
+    && mkdir /var/lib/data \
+    && chown elasticsearch:elasticsearch /var/lib/data \
+    && mkdir /usr/share/elasticsearch/snapshots \
+    && chown elasticsearch:elasticsearch /usr/share/elasticsearch/snapshots
+```
+```yaml
+cluster.name: netology_test
+discovery.type: single-node
 
+path.data: /var/lib/data
+path.logs: /var/lib/logs
+path.repo: /usr/share/elasticsearch/snapshots
+
+network.host: 0.0.0.0
+discovery.seed_hosts: ["127.0.0.1", "[::1]"]
+```
+регистрация
+```bash
+vagrant@server1:/opt/stack/elastic$ curl -X POST http://localhost:9200/_snapshot/netology_backup?pretty -H 'Content-Type: application/json' -d'{"type": "fs", "settings": { "location":"/usr/share/elasticsearch/snapshots" }}'
+{
+  "acknowledged" : true
+}
+```
+проверка
+```bash
+vagrant@server1:/opt/stack/elastic$ curl -X GET 'http://localhost:9200/_snapshot/netology_backup?pretty'
+{
+  "netology_backup" : {
+    "type" : "fs",
+    "settings" : {
+      "location" : "/usr/share/elasticsearch/snapshots"
+    }
+  }
+}
+```
+snapshots:
+```bash
+vagrant@server1:/opt/stack/elastic$ docker exec -it 42ad65d6225c bash
+root@42ad65d6225c:/usr/share/elasticsearch# cd snapshots/
+root@42ad65d6225c:/usr/share/elasticsearch/snapshots# ls -lah
+total 60K
+drwxr-xr-x 1 elasticsearch elasticsearch 4.0K Nov  9 11:19 .
+drwxrwxr-x 1 root          root          4.0K Nov  9 11:03 ..
+-rw-rw-r-- 1 elasticsearch root          1.4K Nov  9 11:19 index-0
+-rw-rw-r-- 1 elasticsearch root             8 Nov  9 11:19 index.latest
+drwxrwxr-x 6 elasticsearch root          4.0K Nov  9 11:19 indices
+-rw-rw-r-- 1 elasticsearch root           29K Nov  9 11:19 meta-DAM_A8BOQsiHAwolc4Is9A.dat
+-rw-rw-r-- 1 elasticsearch root           712 Nov  9 11:19 snap-DAM_A8BOQsiHAwolc4Is9A.dat
+```
+список после удаления, создания
+```bash
+vagrant@server1:/opt/stack/elastic$ curl -X GET 'http://localhost:9200/_cat/indices?v'
+health status index            uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .geoip_databases Db1rOf9_R3e4FektRBcXCQ   1   0         41            0     39.3mb         39.3mb
+green  open   test-2           wbQWJhiRR_2Jps0NbWuJ2A   1   0          0            0       226b           226b
+```
+восстанавливаем
+```bash
+vagrant@server1:/opt/stack/elastic$ curl -X POST http://localhost:9200/_snapshot/netology_backup/elasticsearch/_restore?pretty -H 'Content-Type: application/json' -d'{"indices": "test"}'
+{
+  "accepted" : true
+}
+vagrant@server1:/opt/stack/elastic$ curl -X GET 'http://localhost:9200/_cat/indices?v'
+health status index            uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+green  open   .geoip_databases Db1rOf9_R3e4FektRBcXCQ   1   0         41            0     39.3mb         39.3mb
+green  open   test-2           wbQWJhiRR_2Jps0NbWuJ2A   1   0          0            0       226b           226b
+green  open   test             G0nWHwzeSM2zLWvD4WaUMg   1   0          0            0       226b           226b
+vagrant@server1:/opt/stack/elastic$
+```
