@@ -101,7 +101,7 @@ vagrant@server1:~$ curl -X DELETE 'http://localhost:9200/ind-3?pretty'
 }
 vagrant@server1:~$
 ```
-3
+3 \
 переделываем образ, пересобираем контейнер
 ```yaml
 FROM elasticsearch:7.17.7
