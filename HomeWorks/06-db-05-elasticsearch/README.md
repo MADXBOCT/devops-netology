@@ -85,7 +85,7 @@ vagrant@server1:~$ curl -X GET 'http://localhost:9200/_cluster/health?pretty'
   "active_shards_percent_as_number" : 47.368421052631575
 }
 ```
-кол-во реплик для 2,3 превышает кол-вол доступных серверов data node (single node)
+Кол-во реплик для индексов 2,3 превышает кол-вол доступных серверов data node (кластер быо развернут как single node), поэтому эти индексы "желтые", и это тянет за собой "желтый" статус всего кластера.
 ```bash
 vagrant@server1:~$ curl -X DELETE 'http://localhost:9200/ind-1?pretty'
 {
