@@ -4,7 +4,7 @@ provider "yandex" {
  # folder_id                = ""
  # export YC_TOKEN=$(yc iam create-token)
  # export YC_CLOUD_ID=$(yc config get cloud-id)
- # export YC_FOLDER_ID=$(yc config get folder-id)
+ #
 
 zone = "ru-central1-b"
 }
@@ -26,36 +26,80 @@ data "yandex_compute_image" "ubuntu_image" {
 }
 
 locals {
-  web_instance_type_map = {
-    stage = "t3_micro"
-    prod  = "t3_large"
+  web_instance_count_map = {
+  stage = 1
+  prod = 2
   }
 }
 
-variable "current_settings" {
-  type = list(object({
-    cur_cpu = number
-
-  }))
+locals {
+  web_ids = toset([
+    "w1",
+    "w2",
+  ])
 }
 
-instance_type = local.web_instance_type_map[terraform.workspace]
-
 resource "yandex_compute_instance" "web" {
-  name                      = "qqq"
+  name = "web-${terraform.workspace}"
   #hostname                  = "my-tf-server1.netology.yc"
   allow_stopping_for_update = true
 
+  count = local.web_instance_count_map[terraform.workspace]
+
   resources {
-    cores  = 2
-    memory = 1
-    core_fraction = 5
+    cores  = "${terraform.workspace == "prod" ? 4 : 2}"
+    memory = "${terraform.workspace == "prod" ? 4 : 1}"
+    core_fraction = "${terraform.workspace == "prod" ? 100 : 5}"
   }
 
   platform_id = "standard-v2"
 
   scheduling_policy {
-    preemptible = true
+    preemptible = "${terraform.workspace == "prod" ? false : true}"
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id    = data.yandex_compute_image.ubuntu_image.id
+      type        = "network-ssd"
+      size        = "10"
+    }
+  }
+
+  network_interface {
+    subnet_id  = "${yandex_vpc_subnet.default.id}"
+    nat        = true
+    #ip_address = "192.168.101.11"
+  }
+
+  metadata = {
+    ssh-keys = "ubuntu:${file("~/.ssh/ya-cloud.pub")}"
+  }
+}
+
+
+resource "yandex_compute_instance" "web2" {
+  name = "web2-${terraform.workspace}"
+  #hostname                  = "my-tf-server1.netology.yc"
+  allow_stopping_for_update = true
+
+  for_each = local.web_ids
+
+    lifecycle {
+    create_before_destroy = true
+  }
+
+
+    resources {
+    cores  = "${terraform.workspace == "prod" ? 4 : 2}"
+    memory = "${terraform.workspace == "prod" ? 4 : 1}"
+    core_fraction = "${terraform.workspace == "prod" ? 100 : 5}"
+  }
+
+  platform_id = "standard-v2"
+
+  scheduling_policy {
+    preemptible = "${terraform.workspace == "prod" ? false : true}"
   }
 
   boot_disk {
