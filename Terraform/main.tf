@@ -25,9 +25,25 @@ data "yandex_compute_image" "ubuntu_image" {
   family = "ubuntu-2204-lts"
 }
 
-resource "yandex_compute_instance" "my-tf-server1" {
-  name                      = "my-tf-server1"
-  hostname                  = "my-tf-server1.netology.yc"
+locals {
+  web_instance_type_map = {
+    stage = "t3_micro"
+    prod  = "t3_large"
+  }
+}
+
+variable "current_settings" {
+  type = list(object({
+    cur_cpu = number
+
+  }))
+}
+
+instance_type = local.web_instance_type_map[terraform.workspace]
+
+resource "yandex_compute_instance" "web" {
+  name                      = "qqq"
+  #hostname                  = "my-tf-server1.netology.yc"
   allow_stopping_for_update = true
 
   resources {
@@ -39,7 +55,7 @@ resource "yandex_compute_instance" "my-tf-server1" {
   platform_id = "standard-v2"
 
   scheduling_policy {
-preemptible = true
+    preemptible = true
   }
 
   boot_disk {
@@ -53,7 +69,7 @@ preemptible = true
   network_interface {
     subnet_id  = "${yandex_vpc_subnet.default.id}"
     nat        = true
-    ip_address = "192.168.101.11"
+    #ip_address = "192.168.101.11"
   }
 
   metadata = {
