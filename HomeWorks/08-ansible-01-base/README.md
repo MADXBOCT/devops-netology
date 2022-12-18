@@ -30,3 +30,6 @@ localhost                  : ok=3    changed=0    unreachable=0    failed=0    s
 ---
   some_fact: all default fact%                                                                                                                                                                              ➜  playbook git:(main) 
 ```
+
+docker run -dit --name centos7 spack/centos:7
+docker run -dit --name ubuntu pycontribs/ubuntu:latest
