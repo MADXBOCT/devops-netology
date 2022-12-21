@@ -6,8 +6,12 @@
       become: true
       ansible.builtin.service:
         name: clickhouse-server
-        state: restarted
+        state: started
   tasks:
+    - name: Install initscripts
+      ansible.builtin.yum:
+        name: initscripts
+        state: present
     - block:
         - name: Get clickhouse distrib
           ansible.builtin.get_url:
@@ -17,7 +21,9 @@
       rescue:
         - name: Get clickhouse distrib
           ansible.builtin.get_url:
-            url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
+            #url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
+            #url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.aarch64.rpm"
+            url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.{{ arcvar }}.rpm"
             dest: "./clickhouse-common-static-{{ clickhouse_version }}.rpm"
     - name: Install clickhouse packages
       become: true
@@ -27,7 +33,11 @@
           - clickhouse-common-static-{{ clickhouse_version }}.rpm
           - clickhouse-client-{{ clickhouse_version }}.rpm
           - clickhouse-server-{{ clickhouse_version }}.rpm
-      notify: Start clickhouse service
+      #notify: Start clickhouse service
+    - name: Ensure clickhouse-server is running
+      ansible.builtin.command: service clickhouse-server start
+      become: true
+      become_method: su
     - name: Create database
       ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
       register: create_db
