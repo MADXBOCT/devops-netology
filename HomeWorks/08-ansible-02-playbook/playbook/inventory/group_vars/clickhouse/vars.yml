@@ -1,8 +1,8 @@
 ---
 #clickhouse_version: "22.3.3.44"
-clickhouse_version: "22.3.6.5"
+#clickhouse_version: "22.3.6.5"
+clickhouse_version: "{{ '22.3.3.44' if ansible_architecture == 'x86_64' else '22.3.6.5' }}"
 clickhouse_packages:
   - clickhouse-client
   - clickhouse-server
   - clickhouse-common-static
-arcvar: "{{ 'x86_64' if ansible_architecture == 'x86_64' else 'aarch64' }}"
