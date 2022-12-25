@@ -6,3 +6,4 @@ clickhouse_packages:
   - clickhouse-client
   - clickhouse-server
   - clickhouse-common-static
+ch_arc_var: "{{ 'x86_64' if ansible_architecture == 'x86_64' else 'aarch64' }}"
