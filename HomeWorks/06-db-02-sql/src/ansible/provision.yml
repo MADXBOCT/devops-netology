@@ -58,24 +58,6 @@
 #          mode: 0775
 #          recurse: yes
 
-      - name: Folder init 4
-        file:
-          path: /opt/elastic/data
-          state: directory
-          owner: root
-          group: root
-          mode: 0777
-          recurse: yes
-
-      - name: Folder init 5
-        file:
-          path: /opt/elastic/logs
-          state: directory
-          owner: root
-          group: root
-          mode: 0777
-          recurse: yes
-
 #      - name: Pull all images in compose
 #        command: docker compose -f /opt/stack/docker-compose.yaml pull
 #
