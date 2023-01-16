@@ -81,29 +81,39 @@
 
 - name: Install lighthouse
   hosts: lighthouse
+  vars:
+    server_name: "{{ ansible_default_ipv4.address }}"
+    document_root: /var/www
+    app_root: html_demo_site-main
   tasks:
-    - name:
-    - name: Download lighthouse from remote URL
-      ansible.builtin.get_url:
-        url: "https://"
-        dest: "/"
-        mode: 0755
-        timeout: 60
-        force: true
-        validate_certs: false
-      register: get_lighthouse
-      until: get_lighthouse is succeeded
-      tags: lighthouse
-#    - name: Create directrory for vector
-#      ansible.builtin.file:
-#        state: directory
-#        path: "{{ vector_home }}"
-#        mode: 0755
-#      tags: vector
+    - name: Install nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Download lighthouse web site
+      ansible.builtin.shell: git clone https://github.com/VKCOM/lighthouse/ /var/www && rm -rf /var/www/.git/
+#    - name: Copy website files to the server's document root
+#      copy:
+#        src: "{{ app_root }}"
+#        dest: "{{ document_root }}"
+#        mode: preserve
 #
-#    - name: Set environment Vector
-#      ansible.builtin.template:
-#        src: templates/vector.toml
-#        dest: "{{ vector_home }}/vector.toml"
-#        mode: 0755
-#      tags: vector
+#    - name: Apply Nginx template
+#      template:
+#        src: files/nginx.conf.j2
+#        dest: /etc/nginx/sites-available/default
+#      notify: Restart Nginx
+#
+#    - name: Enable new site
+#      file:
+#        src: /etc/nginx/sites-available/default
+#        dest: /etc/nginx/sites-enabled/default
+#        state: link
+#      notify: Restart Nginx
+
+  handlers:
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
