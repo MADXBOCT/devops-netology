@@ -81,52 +81,18 @@
 
 - name: Install lighthouse
   hosts: lighthouse
-  become: true
-  become_method: sudo
   vars:
     server_name: "{{ ansible_default_ipv4.address }}"
     document_root: /var/www
     app_root: html_demo_site-main
   tasks:
-#     - name: Install git
-#       ansible.builtin.yum:
-#         name: git
-#         state: present
-#       tags: lighthouse
-    - name: Add epel-release repo
-      yum:
-        name: epel-release
-        state: present
-
     - name: Install nginx
-      yum:
+      apt:
         name: nginx
         state: present
+        update_cache: yes
+      tags: lighthouse
 
-#     - name: Download lighthouse web site
-#       ansible.builtin.shell: git clone https://github.com/VKCOM/lighthouse/ /var/www && rm -rf /var/www/.git/
-#       tags: lighthouse
-#    - name: Copy website files to the server's document root
-#      copy:
-#        src: "{{ app_root }}"
-#        dest: "{{ document_root }}"
-#        mode: preserve
-#
-#    - name: Apply Nginx template
-#      template:
-#        src: files/nginx.conf.j2
-#        dest: /etc/nginx/sites-available/default
-#      notify: Restart Nginx
-#
-#    - name: Enable new site
-#      file:
-#        src: /etc/nginx/sites-available/default
-#        dest: /etc/nginx/sites-enabled/default
-#        state: link
-#      notify: Restart Nginx
-#     - name: Ensure lighthouse is running
-#       ansible.builtin.command: service nginx start
-#       tags: lighthouse
     - name: Start NGiNX
       service:
         name: nginx
