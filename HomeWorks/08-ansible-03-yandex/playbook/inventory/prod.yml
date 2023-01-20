@@ -9,6 +9,7 @@
 #      ansible_connection: docker
 lighthouse:
   hosts:
-    62.84.122.111:
+    lighthouse-01:
       ansible_connection: ssh
       ansible_user: qqq
+      ansible_host: 62.84.122.111
