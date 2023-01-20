@@ -1,5 +1,4 @@
 ---
 vector_version: "0.26.0"
 vec_arc_var: "{{ 'x86_64' if ansible_architecture == 'x86_64' else 'aarch64' }}"
-#vec_arc_var: "{{ 'x86_64' if ansible_architecture == 'x86_64' else 'arm64' }}"
 vector_home: "/opt/vector"

@@ -1,9 +1,14 @@
 ---
-clickhouse:
+#clickhouse:
+#  hosts:
+#    clickhouse-01:
+#      ansible_connection: docker
+#vector:
+#  hosts:
+#    vector-01:
+#      ansible_connection: docker
+lighthouse:
   hosts:
-    clickhouse-01:
-      ansible_connection: docker
-vector:
-  hosts:
-    vector-01:
-      ansible_connection: docker
+    62.84.122.111:
+      ansible_connection: ssh
+      ansible_user: qqq

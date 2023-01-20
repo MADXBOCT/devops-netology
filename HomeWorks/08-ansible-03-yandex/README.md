@@ -1,11 +1,21 @@
-docker run -dit --name clickhouse-01 centos:7 && \
-docker run -dit --name vector-01 centos:7 && \
-docker run -dit -p 18123:8123 --name lighthouse-01 --cap-add=NET_ADMIN --privileged=true centos:7 /usr/sbin/init
-docker run -dit -p 18123:8123 --name lighthouse-01 ubuntu:22.04
-docker stop  $(docker ps -a -q) && docker rm -f $(docker ps -a -q)
+## Описание Group Vars
+Добавлен файл `lighthouse/vars.yml`, который содержит некоторые переменные
 
-mkdir htdocs && git clone https://github.com/VKCOM/lighthouse/ ./htdocs && rm -rf ./htdocs/.git/
-curl -L https://github.com/do-community/html_demo_site/archive/refs/heads/main.zip -o html_demo.zip
-curl -L https://github.com/VKCOM/lighthouse/archive/refs/heads/main.zip -o html_demo.zip
+### Описание lighthouse/vars.yml
+ - `lighthouse_url`  - url для скачивания дистрибутива (сайт статики) lighthouse
+ - `arc_name` -  название архивного файла после скачивания, с которым дальше прдстоит работать
+ - `tmp_fld` - расположение временного каталога
+ - `websrv_home` - расположение root каталога веб-сервера nginx 
 
-ansible-playbook -i inventory/test.yml site.yml
+## Описание Play
+Добавлен play *Install lighthouse*.
+Установлены тэги *lighthouse* для дальнейшего использования и отладки.
+
+### Описание *Install lighthouse*
+ - установка nginx
+ - скачивание архива с kighthouse
+ - удаление контента по-умолчанию из root каталога nginx
+ - установка unzip
+ - разархивирование содержимого архива во временный каталог
+ - перемещение веб-сайта в root каталог nginx
+ - запуск вебсервера nginx
