@@ -12,4 +12,4 @@ lighthouse:
     lighthouse-01:
       ansible_connection: ssh
       ansible_user: qqq
-      ansible_host: 62.84.122.111
+      ansible_host: 158.160.11.130
