@@ -15,11 +15,11 @@
 ![](img/builder-8.png)
 
 ###  Лог выполнения pipeline на ветке *main*
-![](img/.png)
-![](img/.png)
-![](img/.png)
+![](img/deployer-1.png)
+![](img/deployer-2.png)
+![](img/deployer-3.png)
 
 ###  решенный Issue
-![](img/.png)
-![](img/.png)
-![](img/.png)
+![](img/issue-1.png)
+![](img/issue-2.png)
+![](img/issue-3.png)
