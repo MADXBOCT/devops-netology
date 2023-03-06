@@ -1,0 +1,4 @@
+---
+# vars file for vector-role
+vec_arc_var: "{{ 'x86_64' if ansible_architecture == 'x86_64' else 'aarch64' }}"
+vector_home: "/opt/vector"
