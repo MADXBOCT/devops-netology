@@ -12,4 +12,5 @@ Starting galaxy role install process
 ➜  08-ansible-03-yandex git:(main) ansible-galaxy role init vector-role
 - Role vector-role was created successfully
 ➜  08-ansible-03-yandex git:(main) 
-- 
+
+ansible-galaxy role init lighthouse-role
