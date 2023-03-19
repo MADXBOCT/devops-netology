@@ -1,16 +1,17 @@
-Vector Role
+Role Name
 =========
 
-This role install Vector. 
+This role install lighthouse
 
 Role Variables
 --------------
 
 | vars           | description|
 |----------------|--------------------|
-| vector_version | Version of Vector to install |
-| vec_arc_var    | Desired machine architecture | 
-| vector_home    | Vector home directory |
+| lighthouse_url | Download URL for lighthouse|
+| arc_name       | Temp archive name|
+| tmp_fld        | Temp folder for download
+| websrv_home    | Nginx home folder location|
 
 Example Playbook
 ----------------
@@ -19,7 +20,7 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: vector-role }
+         - { role: lighthouse-role }
 
 License
 -------

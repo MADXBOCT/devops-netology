@@ -1,0 +1,6 @@
+---
+# vars file for lighthouse-role
+lighthouse_url: "https://github.com/VKCOM/lighthouse/archive/refs/heads/master.zip"
+arc_name: "lighthouse.zip"
+tmp_fld: "/tmp"
+websrv_home: "/var/www/html/"

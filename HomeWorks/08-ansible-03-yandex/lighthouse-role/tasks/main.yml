@@ -1,0 +1,57 @@
+---
+# tasks file for lighthouse-role
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: yes
+  become: true
+  become_method: sudo
+  tags: lighthouse
+- name: Download Lighthouse from remote URL
+  ansible.builtin.get_url:
+    url: "{{ lighthouse_url }}"
+    dest: "{{ tmp_fld }}/{{ arc_name }}"
+    mode: 0755
+    timeout: 60
+    force: true
+    validate_certs: false
+  register: get_lighthouse
+  until: get_lighthouse is succeeded
+  tags: lighthouse
+
+- name: Prepare Nginx folder
+  ansible.builtin.shell: rm -rf {{ websrv_home }}/*
+  become: true
+  become_method: sudo
+  tags: lighthouse
+
+- name: Install unzip
+  ansible.builtin.apt:
+    name: unzip
+    state: present
+    update_cache: yes
+  become: true
+  become_method: sudo
+  tags: lighthouse
+
+- name: Extract lighthouse
+  ansible.builtin.unarchive:
+    copy: false
+    src: "{{ tmp_fld }}/{{ arc_name }}"
+    dest: "{{ tmp_fld }}"
+  tags: lighthouse
+
+- name: Move extracted content
+  ansible.builtin.shell: mv {{ tmp_fld }}/lighthouse-master/* {{ websrv_home }}
+  become: true
+  become_method: sudo
+  tags: lighthouse
+
+- name: Start NGiNX
+  service:
+    name: nginx
+    state: started
+  become: true
+  become_method: sudo
+  tags: lighthouse
