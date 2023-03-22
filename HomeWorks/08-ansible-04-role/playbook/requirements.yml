@@ -5,9 +5,9 @@
     name: clickhouse
   - src: git@github.com:madxboct/vector-role.git
     scm: git
-    version: "v1.0.0"
+    version: "1.0.0"
     name: vector-role
   - src: git@github.com:madxboct/lighthouse-role.git
     scm: git
-    version: "v1.0.0"
+    version: "1.0.0"
     name: lighthouse-role
