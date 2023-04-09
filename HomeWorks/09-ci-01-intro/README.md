@@ -14,4 +14,4 @@
 ![](img/5_scrum_closed.png)
 
 ###  Exported workflow
-https://github.com/MADXBOCT/devops-netology/tree/main/HomeWorks/09-ci-01-intro/files
+[XML workflow](/files)
