@@ -1,6 +1,9 @@
-### Molecule
+## Molecule
 
+### Сценарий тестирования:
 [Molecule config](https://github.com/MADXBOCT/vector-role/tree/main/molecule/default)
+
+### Результат выполнения:
 ```bash
 ➜  vector_role git:(main) ✗ molecule test   
 INFO     default scenario test matrix: dependency, lint, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy
