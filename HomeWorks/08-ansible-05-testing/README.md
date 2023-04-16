@@ -256,10 +256,10 @@ INFO     Pruning extra files from scenario ephemeral directory
 
 ## Tox
 
-### Сценарий тестирования:
+### Сценарий тестирования и конфиги:
 [Molecule config for tox](https://github.com/MADXBOCT/vector-role/tree/main/molecule/tox) \
-[tox.ini](https://github.com/MADXBOCT/vector-role/tox.ini) \
-[tox-requirements.txt](https://github.com/MADXBOCT/vector-role/tox-requirements.txt)
+[tox.ini](https://github.com/MADXBOCT/vector-role/blob/main/tox.ini) \
+[tox-requirements.txt](https://github.com/MADXBOCT/vector-role/blob/main/tox-requirements.txt)
 
 ### Результат выполнения:
 ```bash
