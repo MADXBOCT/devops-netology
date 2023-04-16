@@ -257,8 +257,8 @@ INFO     Pruning extra files from scenario ephemeral directory
 ## Tox
 
 ### Сценарий тестирования:
-[Molecule config for tox](https://github.com/MADXBOCT/vector-role/tree/main/molecule/tox)
-[tox.ini](https://github.com/MADXBOCT/vector-role/tox.ini)
+[Molecule config for tox](https://github.com/MADXBOCT/vector-role/tree/main/molecule/tox) \
+[tox.ini](https://github.com/MADXBOCT/vector-role/tox.ini) \
 [tox-requirements.txt](https://github.com/MADXBOCT/vector-role/tox-requirements.txt)
 
 ### Результат выполнения:
