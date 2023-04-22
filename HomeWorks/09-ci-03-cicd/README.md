@@ -206,6 +206,15 @@ INFO: Mac OS X 13.3.1 x86_64
 ![](img/sonar2.png)
 
 ## Nexus
+
+### Загрузка 
+![](img/nexus1.png)
+![](img/nexus2.png)
+
+### Файл
+[maven-metadata.xml](https://github.com/MADXBOCT/devops-netology/blob/main/HomeWorks/09-ci-03-cicd/maven-metadata.xml)
+
+### Maven
 ```bash
 ➜  mvn git:(MNT-video) ✗ mvn package                                                              
 [INFO] Scanning for projects...
@@ -233,3 +242,5 @@ total 24
 -rw-r--r--  1 madxboct  staff   390B Apr 22 14:19 java-8_282.pom.lastUpdated
 ➜  8_282 
 ```
+ ### исправленный файл
+[pom.xml](https://github.com/MADXBOCT/devops-netology/blob/main/HomeWorks/09-ci-03-cicd/pom.xml)
