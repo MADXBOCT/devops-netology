@@ -137,3 +137,62 @@ multitool-separate:/#
 ```
 
 ### Задание2
+Создаем Deployment c Init контейнером
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment-2
+  labels:
+    app.kubernetes.io/name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nginx
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+          name: http-web-svc
+      initContainers:
+        - name: init-nginx-service
+          image: busybox
+          command: ['sh', '-c', "until nslookup nginx-service.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+```
+Ожидание создания сервиса
+```bash
+ubuntu@srvlandevops2:~/kuber$ kubectl get po
+NAME                               READY   STATUS     RESTARTS   AGE
+my-deployment-2-7b9887bdd9-xknvn   0/1     Init:0/1   0          12s
+```
+Создаем сервис
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app.kubernetes.io/name: nginx
+  ports:
+    - name: http-nginx-port
+      protocol: TCP
+      port: 2080
+      targetPort: http-web-svc
+```
+Запуск основного контейнера
+```bash
+ubuntu@srvlandevops2:~/kuber$ kubectl get po
+NAME                               READY   STATUS            RESTARTS   AGE
+my-deployment-2-7b9887bdd9-xknvn   0/1     PodInitializing   0          29s
+ubuntu@srvlandevops2:~/kuber$ kubectl get po
+NAME                               READY   STATUS    RESTARTS   AGE
+my-deployment-2-7b9887bdd9-xknvn   1/1     Running   0          31s
+```
