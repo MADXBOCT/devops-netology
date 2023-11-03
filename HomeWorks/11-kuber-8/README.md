@@ -139,6 +139,29 @@ spec:
 ```
 
 ```bash
+ubuntu@srvlandevops2:~/kuber$ kubectl describe service my-node-service
+Name:                     my-node-service
+Namespace:                default
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app.kubernetes.io/name=nginx-multitool
+Type:                     NodePort
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.152.183.83
+IPs:                      10.152.183.83
+Port:                     node-tcp-nginx  9001/TCP
+TargetPort:               http-web-svc/TCP
+NodePort:                 node-tcp-nginx  30007/TCP
+Endpoints:                10.1.181.195:80,10.1.181.196:80,10.1.181.197:80
+Port:                     node-tcp-mt  9002/TCP
+TargetPort:               multitool-8080/TCP
+NodePort:                 node-tcp-mt  30008/TCP
+Endpoints:                10.1.181.195:8080,10.1.181.196:8080,10.1.181.197:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+
 sgudimov@VMADM2-007:~$ curl -I 192.168.127.18:30007
 HTTP/1.1 200 OK
 Server: nginx/1.25.3
