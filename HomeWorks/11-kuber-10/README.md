@@ -93,7 +93,7 @@ spec:
           path: /var/log
 ```
 
-Проверяем, что Daemonset поднял под, заходим в него и открываем лог\
+Проверяем, что Daemonset поднял под, заходим в него и открываем лог
 ```bash
 ubuntu@srvlandevops2:~/kuber$ kubectl get po
 NAME                   READY   STATUS    RESTARTS   AGE
