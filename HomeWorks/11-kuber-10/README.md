@@ -41,7 +41,7 @@ NAME                   READY   STATUS    RESTARTS   AGE
 mt-bb-f5584757-brcn4   2/2     Running   0          5m1s
 ```
 
-Заходим в созданный под в контейнер multitool
+Заходим в созданный под в контейнер multitool \
 `ubuntu@srvlandevops2:~/kuber$ kubectl exec -it mt-bb-f5584757-brcn4 -c multitool -- bash`
 
 Проверяем что директории /in нет, а out есть; ставим метки из даты, считаем кол-во строк в файле - оно должно увеличиваться
