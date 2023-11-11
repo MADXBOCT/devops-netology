@@ -62,7 +62,7 @@ mt-bb-f5584757-brcn4:/#
 ```
 
 ## Задание 2
-### Манифест deployment
+### Манифест Daemonset
 
 ```yaml
 apiVersion: apps/v1
