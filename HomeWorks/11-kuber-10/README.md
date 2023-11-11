@@ -25,7 +25,7 @@ spec:
           mountPath: /out
       - name: busybox
         image: busybox
-        command: ['sh', '-c', 'while true; do echo "it-s working" >> /in/file.txt; sleep 2; done']
+        command: ['sh', '-c', 'while true; do echo "it-s working" >> /in/file.txt; sleep 5; done']
         volumeMounts:
         - name: shvol1
           mountPath: /in
