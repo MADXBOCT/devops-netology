@@ -1,26 +1,19 @@
 ## Задание 1
 ### Манифест deployment
 ```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mt-bb
-  labels:
-    app.kubernetes.io/name: mt-bb
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: mt-bb
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: mt-bb
-    spec:
-      containers:
-      - name: multitool
-        image: wbitt/network-multitool
-      - name: busybox
-        image: busybox
-        command: ['sh', '-c', 'while true; do echo "it-s working" >> /in/file.txt; sleep 5; done']
+
+```
+
+```bash
+Ξ ~ → microk8s enable hostpath-storage
+Infer repository core for addon hostpath-storage
+Enabling default storage class.
+WARNING: Hostpath storage is not suitable for production environments.
+
+deployment.apps/hostpath-provisioner created
+storageclass.storage.k8s.io/microk8s-hostpath created
+serviceaccount/microk8s-hostpath created
+clusterrole.rbac.authorization.k8s.io/microk8s-hostpath created
+clusterrolebinding.rbac.authorization.k8s.io/microk8s-hostpath created
+Storage will be available soon.
 ```
