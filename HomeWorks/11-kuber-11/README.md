@@ -141,7 +141,7 @@ persistentvolume "my-pv-1" deleted
 ubuntu@srvlandevops2:~/kuber$ ls /tmp/qqq
 file.txt
 ```
-Файл остался на локальном диске ноды, так как использовался тип PV=local
-В документации и про это [написано](https://kubernetes.io/docs/concepts/storage/volumes/#local)
+Файл остался на локальном диске ноды, так как использовался тип PV=local. \
+В документации и про это [написано](https://kubernetes.io/docs/concepts/storage/volumes/#local) 
 > Note: The local PersistentVolume requires manual cleanup and deletion by the user if the external static provisioner is not used to manage the volume lifecycle.
 
