@@ -1,5 +1,8 @@
 ## Задание 1
-### Манифест PV,PVC, deployment
+
+### Часть 1,2.
+
+#### Манифест PV,PVC, deployment
 ```yaml
 ---
 apiVersion: v1
@@ -89,6 +92,8 @@ deployment.apps/mt-bb   1/1     1            1           5m16s
 ubuntu@srvlandevops2:~/kuber$
 ```
 
+### Часть 3.
+
 Заходим в созданный под в контейнер multitool, ставим метки из даты, считаем кол-во строк в файле - оно должно увеличиваться
 ```bash
 ubuntu@srvlandevops2:~/kuber$ kubectl exec -it mt-bb-6f8d46f9bf-llhkf -c multitool -- bash
@@ -102,6 +107,9 @@ mt-bb-6f8d46f9bf-llhkf:/# wc -l /out/file.txt
 112 /out/file.txt
 mt-bb-6f8d46f9bf-llhkf:/#
 ```
+
+### Часть 4.
+
 Удаляем Deployment, PVC
 ```bash
 ubuntu@srvlandevops2:~/kuber$ kubectl delete deployments.apps mt-bb
@@ -120,6 +128,7 @@ PV остался благодаря `RECLAIM POLICY = Retain` \
 В документации четко об этом [сказано](https://kubernetes.io/docs/tasks/administer-cluster/change-pv-reclaim-policy/)
 > With the "Retain" policy, if a user deletes a PersistentVolumeClaim, the corresponding PersistentVolume will not be deleted. Instead, it is moved to the Released phase, where all of its data can be manually recovered.
 
+### Часть 5. 
 Файл на месте
 ```bash
 ubuntu@srvlandevops2:~/kuber$ ls /tmp/qqq
