@@ -145,3 +145,101 @@ file.txt
 В документации и про это [написано](https://kubernetes.io/docs/concepts/storage/volumes/#local) 
 > Note: The local PersistentVolume requires manual cleanup and deletion by the user if the external static provisioner is not used to manage the volume lifecycle.
 
+## Задание 2
+Установка nfs \
+`sudo apt install -y nfs-common` \
+`microk8s enable community` \
+`microk8s enable nfs`
+
+Автоматически создается storage class
+```bash
+ubuntu@srvlandevops2:~$ kubectl describe sc
+Name:                  nfs
+IsDefaultClass:        No
+Annotations:           meta.helm.sh/release-name=nfs-server-provisioner,meta.helm.sh/release-namespace=nfs-server-provisioner
+Provisioner:           cluster.local/nfs-server-provisioner
+Parameters:            <none>
+AllowVolumeExpansion:  True
+MountOptions:
+  vers=3
+ReclaimPolicy:      Delete
+VolumeBindingMode:  Immediate
+Events:             <none>
+```
+
+Манифест
+```yaml
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs
+  labels:
+    vol: pvc-nfs
+spec:
+  storageClassName: "nfs"
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mt
+  labels:
+    app.kubernetes.io/name: mt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mt
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mt
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+        volumeMounts:
+        - name: vol1
+          mountPath: /out
+      volumes:
+        - name: vol1
+          persistentVolumeClaim:
+            claimName: pvc-nfs
+```
+
+Заходим в под и создаем пустой файл, выходим, вносим изменения, снова заходим, проверяем.
+```bash
+ubuntu@srvlandevops2:~/kuber$ kubectl -it exec mt-58bdb479fc-l9m7k -- bash
+mt-58bdb479fc-l9m7k:/# cd /out
+mt-58bdb479fc-l9m7k:/out# touch file.txt
+mt-58bdb479fc-l9m7k:/out# exit
+exit
+ubuntu@srvlandevops2:~/kuber$ cd /var/snap/microk8s/common/nfs-storage
+ubuntu@srvlandevops2:/var/snap/microk8s/common/nfs-storage$ ll
+total 36
+drwxr-xr-x 5 root root 4096 Dec 22 15:01 ./
+drwxr-xr-x 8 root root 4096 Dec 22 14:59 ../
+-rw-r--r-- 1 root root 4736 Dec 22 15:00 ganesha.log
+-rw------- 1 root root   36 Dec 22 14:59 nfs-provisioner.identity
+drwxrwsrwx 2 root root 4096 Dec 22 15:46 pvc-4b29d08d-9dc0-40a3-87d4-1ad669d96ac4/
+drwxr-xr-x 3 root root 4096 Dec 22 14:59 v4old/
+drwxr-xr-x 3 root root 4096 Dec 22 14:59 v4recov/
+-rw------- 1 root root  921 Dec 22 15:01 vfs.conf
+ubuntu@srvlandevops2:/var/snap/microk8s/common/nfs-storage$ cd pvc-4b29d08d-9dc0-40a3-87d4-1ad669d96ac4/
+ubuntu@srvlandevops2:/var/snap/microk8s/common/nfs-storage/pvc-4b29d08d-9dc0-40a3-87d4-1ad669d96ac4$ ll
+total 8
+drwxrwsrwx 2 root root 4096 Dec 22 15:46 ./
+drwxr-xr-x 5 root root 4096 Dec 22 15:01 ../
+-rw-r--r-- 1 root root    0 Dec 22 15:46 file.txt
+ubuntu@srvlandevops2:/var/snap/microk8s/common/nfs-storage/pvc-4b29d08d-9dc0-40a3-87d4-1ad669d96ac4$ sudo nano file.txt
+ubuntu@srvlandevops2:/var/snap/microk8s/common/nfs-storage/pvc-4b29d08d-9dc0-40a3-87d4-1ad669d96ac4$ kubectl -it exec mt-58bdb479fc-l9m7k -- bash
+mt-58bdb479fc-l9m7k:/# cat /out/file.txt
+11111
+mt-58bdb479fc-l9m7k:/#
+```
