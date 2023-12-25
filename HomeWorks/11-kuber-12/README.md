@@ -93,9 +93,9 @@ Accept-Ranges: bytes
 
 ## Задание 2
 
-### Генерим серт и приватный ключ
-`openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server-key.pem -out server.pem -subj "/CN=qqq.local/O=qqq.local"`
-`cat server.pem | base64`
+### Генерим серт и приватный ключ, получаем base64
+`openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server-key.pem -out server.pem -subj "/CN=qqq.local/O=qqq.local"` \
+`cat server.pem | base64` \
 `cat server-key.pem | base64`
 
 ### Манифест
