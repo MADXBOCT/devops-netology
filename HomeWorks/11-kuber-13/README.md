@@ -14,7 +14,7 @@
 Создаем контекст, привязываем пользователя \
 `kubectl config set-context usr --cluster=microk8s-cluster --user=qqq`
 
-Применяем манифест
+### Применяем манифест
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -55,7 +55,8 @@ spec:
 Переключаемся в контеккст пользователя \
 `kubectl config use-context usr`
 
-Проверка \
+### Проверка
+
 ```bash
 ubuntu@srvlandevops2:~/kuber$ kubectl get pod
 NAME          READY   STATUS    RESTARTS   AGE
