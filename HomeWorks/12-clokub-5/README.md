@@ -1,3 +1,22 @@
+Указанный в задании манифест не отрабатывает, необходимо добавить namespace
+
+```yaml
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: web
+  labels:
+    name: web
+
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: data
+  labels:
+    name: data
+```
+
 Проверим, что приложения запустились
 ```bash
 ubuntu@kubnode1:~/kuber$ kubectl get all -n web
