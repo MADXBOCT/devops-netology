@@ -1,4 +1,4 @@
-Конфигурационные файлы terraform находятся в папке src/terraform
+Конфигурационные файлы terraform находятся в папке [src/terraform](https://github.com/MADXBOCT/devops-netology/tree/main/HomeWorks/12-clokub-6/src/terraform)
 
 Результат работы terraform (короткий вывод)
 ```bash
