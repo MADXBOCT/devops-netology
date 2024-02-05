@@ -1,0 +1,4 @@
+#cloud-config
+
+runcmd:
+  - echo '<html><img src="https://storage.yandexcloud.net/sgudimov-20240205/picture.jpg" alt="" /></html>' > /var/www/html/index.html
