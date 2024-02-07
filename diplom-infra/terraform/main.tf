@@ -7,37 +7,25 @@ data "yandex_compute_image" "ubuntu_image" {
   family = "ubuntu-2204-lts"
 }
 
-resource "yandex_iam_service_account" "sa" {
-  name = "robot"
-}
+resource "null_resource" "web_hosts_provision" {
+  depends_on = [yandex_compute_instance_group.k8s-master]
 
-#resource "yandex_iam_service_account" "sa2" {
-#  name = "robot2"
-#}
+#  provisioner "local-exec" {
+#    command = "echo '${var.PATH_TO_PRIVATE_KEY}' | ssh-add -"
+#  }
 
-// Assigning roles to the service account
-resource "yandex_resourcemanager_folder_iam_member" "sa-editor" {
-  folder_id = "b1gqdc5g77am21vlmc7a"
-  role      = "editor"
-  member    = "serviceAccount:${yandex_iam_service_account.sa.id}"
-}
+  provisioner "local-exec" {
+    command = <<-EOA
+      echo "${templatefile("ansible_inventory.yml.tftpl",
+        { hosts = yandex_compute_instance.web[*] })}" > hosts.yml
+    EOA
+  }
 
-resource "yandex_resourcemanager_folder_iam_member" "comp-editor" {
-  folder_id = "b1gqdc5g77am21vlmc7a"
-  role      = "admin"
-  member    = "serviceAccount:${yandex_iam_service_account.sa2.id}"
-}
-
-// Creating a static access key
-resource "yandex_iam_service_account_static_access_key" "sa-static-key" {
-  service_account_id = yandex_iam_service_account.sa.id
-  description        = "static access key for object storage"
-}
-
-// Creating a bucket using the key
-resource "yandex_storage_bucket" "my-tfstate-bucket-sg-2024" {
-  access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
-  secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
-  bucket     = "my-tfstate-bucket-sg-2024"
+  provisioner "local-exec" {
+    command     = "ansible-playbook -i hosts.yml provision.yml"
+    interpreter = ["bash"]
+    environment = { ANSIBLE_HOST_KEY_CHECKING = "False" }
+    triggers    = { always_run = "${timestamp()}" }
+  }
 
 }
