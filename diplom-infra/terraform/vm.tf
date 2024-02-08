@@ -3,15 +3,18 @@ resource "yandex_compute_instance_group" "k8s-master" {
   service_account_id = "aje56burc53lo57paasf"
 
   instance_template {
+    name = "my-instance-{instance.index}"
+    hostname = "my-instance-{instance.index}"
+
     platform_id = "standard-v2"
     resources {
-      memory        = 1
+      memory        = 2
       cores         = 2
-      core_fraction = 5
+      core_fraction = 100
     }
 
     scheduling_policy {
-      preemptible = "true"
+      preemptible = "false"
     }
 
     boot_disk {
@@ -29,7 +32,7 @@ resource "yandex_compute_instance_group" "k8s-master" {
     }
 
     metadata = {
-      ssh-keys = "${var.SSH_USER}:${var.PATH_TO_PRIVATE_KEY}"
+      ssh-keys = "ubuntu:${file("~/.ssh/cicd.pub")}"
     }
 
     labels = {
@@ -41,7 +44,8 @@ resource "yandex_compute_instance_group" "k8s-master" {
 
   scale_policy {
       fixed_scale {
-        size = 3
+        size = 1
+
       }
     }
 
@@ -55,5 +59,16 @@ resource "yandex_compute_instance_group" "k8s-master" {
       max_expansion   = 1
       max_deleting    = 1
     }
+
+    # Wait for SSH connection to become available, which means VM is up and running
+  provisioner "remote-exec" {
+    inline = ["echo 'SSH is up!'"]
+    connection {
+      host        = element(self.instances[*].network_interface[0].nat_ip_address, 0)
+      type        = "ssh"
+      user        = var.SSH_USER
+      private_key = file(var.PATH_TO_PRIVATE_KEY)
+    }
+  }
 
 }
