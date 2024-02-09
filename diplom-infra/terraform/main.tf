@@ -4,12 +4,32 @@ provider "yandex" {
 
 #image
 data "yandex_compute_image" "ubuntu_image" {
-  family = "ubuntu-2004-lts"
+  family = "ubuntu-2204-lts"
 }
 
-# After we got ip addresses of our k8s nodes we can create inventory file for ansible from a template
-resource "local_file" "inventory" {
+resource "time_sleep" "wait_many_seconds" {
   depends_on = [yandex_compute_instance_group.k8s-master]
+  create_duration = "120s"
+}
+
+resource "null_resource" "check_ssh" {
+  depends_on = [time_sleep.wait_many_seconds]
+
+    provisioner "remote-exec" {
+    inline = ["echo 'SSH is up!'"]
+    connection {
+      host        = element(yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].nat_ip_address, 0)
+      type        = "ssh"
+      user        = var.SSH_USER
+      private_key = file(var.PATH_TO_PRIVATE_KEY)
+      timeout = "5m"
+    }
+  }
+
+}
+
+resource "local_file" "inventory" {
+  depends_on = [null_resource.check_ssh]
   content = templatefile("${path.module}/templates/inventory.tpl",
     {
       k8s_masters = yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].nat_ip_address
@@ -18,6 +38,7 @@ resource "local_file" "inventory" {
     }
   )
   filename = "${path.module}/../ansible/inventory"
+
 
   # As soon inventory file is ready we can call Ansible playbook to configure k8s cluster
   provisioner "local-exec" {

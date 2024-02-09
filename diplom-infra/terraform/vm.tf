@@ -8,20 +8,21 @@ resource "yandex_compute_instance_group" "k8s-master" {
 
     platform_id = "standard-v2"
     resources {
-      memory        = 2
-      cores         = 2
-      core_fraction = 100
+      memory        = 4
+      cores         = 4
+      core_fraction = 20
     }
 
     scheduling_policy {
-      preemptible = "false"
+      preemptible = "true"
     }
 
     boot_disk {
       mode = "READ_WRITE"
       initialize_params {
         image_id = data.yandex_compute_image.ubuntu_image.id
-        size     = 10
+        size     = 20
+        type = "network-ssd"
       }
     }
 
@@ -55,20 +56,8 @@ resource "yandex_compute_instance_group" "k8s-master" {
 
   deploy_policy {
       max_unavailable = 1
-      max_creating    = 1
+      max_creating    = 2
       max_expansion   = 1
-      max_deleting    = 1
+      max_deleting    = 2
     }
-
-    # Wait for SSH connection to become available, which means VM is up and running
-  provisioner "remote-exec" {
-    inline = ["echo 'SSH is up!'"]
-    connection {
-      host        = element(self.instances[*].network_interface[0].nat_ip_address, 0)
-      type        = "ssh"
-      user        = var.SSH_USER
-      private_key = file(var.PATH_TO_PRIVATE_KEY)
-    }
-  }
-
 }

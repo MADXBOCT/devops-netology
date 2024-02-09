@@ -12,6 +12,10 @@
   shell: kubeadm init --apiserver-cert-extra-sans={{ publicIP.stdout }}
   when: not kubeadm_ca.stat.exists
 
+- name: Pause for 1 minute
+  ansible.builtin.pause:
+    minutes: 1
+
 - name: Ensure .kube directory exists.
   file:
     path: ~/.kube
@@ -25,11 +29,8 @@
     state: link
     mode: 0644
 
-- name: Installing network plugin part 1
-  shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/tigera-operator.yaml
-
-- name: Installing network plugin part 2
-  shell: kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/custom-resources.yaml
+#- name: Installing network plugin
+#  shell: kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
 - name: Getting join command from the master node
   shell: kubeadm token create --print-join-command
@@ -40,14 +41,22 @@
     name: k8s_master
     k8s_join_command: "{{ join_command.stdout }}"
 
+- name: Copy file with owner and permissions
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /tmp/admin.conf
+    owner: root
+    group: root
+    mode: '0644'
+
 - name: Replace local ip in kubectl admin.conf to public ip
   replace:
-    path: /etc/kubernetes/admin.conf
+    path: /tmp/admin.conf
     regexp: '(\b[0-9]{1,3}\.){3}[0-9]{1,3}\b'
     replace: "{{ publicIP.stdout }}"
 
 - name: Copy admin.conf to localhost ~/.kube/conf
   ansible.builtin.fetch:
-    src: /etc/kubernetes/admin.conf
+    src: /tmp/admin.conf
     dest: ~/.kube/config
     flat: yes
