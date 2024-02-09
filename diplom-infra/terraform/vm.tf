@@ -6,11 +6,11 @@ resource "yandex_compute_instance_group" "k8s-master" {
     name = "my-instance-{instance.index}"
     hostname = "my-instance-{instance.index}"
 
-    platform_id = "standard-v2"
+    platform_id = "standard-v3"
     resources {
-      memory        = 4
+      memory        = 8
       cores         = 4
-      core_fraction = 20
+      core_fraction = 100
     }
 
     scheduling_policy {
@@ -21,7 +21,7 @@ resource "yandex_compute_instance_group" "k8s-master" {
       mode = "READ_WRITE"
       initialize_params {
         image_id = data.yandex_compute_image.ubuntu_image.id
-        size     = 20
+        size     = 100
         type = "network-ssd"
       }
     }

@@ -9,12 +9,12 @@
   register: publicIP
 
 - name: Init
-  shell: kubeadm init --apiserver-cert-extra-sans={{ publicIP.stdout }}
+  shell: kubeadm init --apiserver-cert-extra-sans={{ publicIP.stdout }} --pod-network-cidr 10.244.0.0/16
   when: not kubeadm_ca.stat.exists
 
-- name: Pause for 1 minute
-  ansible.builtin.pause:
-    minutes: 1
+#- name: Pause for 1 minute
+#  ansible.builtin.pause:
+#    minutes: 1
 
 - name: Ensure .kube directory exists.
   file:
@@ -29,13 +29,38 @@
     state: link
     mode: 0644
 
-#- name: Installing network plugin
-#  shell: kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
+#- name: Wait for all control-plane pods become created
+#  shell: "kubectl get po --namespace=kube-system --selector tier=control-plane --output=jsonpath='{.items[*].metadata.name}'"
+#  register: control_plane_pods_created
+#  until: item in control_plane_pods_created.stdout
+#  retries: 10
+#  delay: 30
+#  with_items:
+#    - etcd
+#    - kube-apiserver
+#    - kube-controller-manager
+#    - kube-scheduler
+#    - kube-proxy
+
+- name: Wait for control-plane pods become ready
+  shell: "kubectl wait --namespace=kube-system --for=condition=Ready pods --selector tier=control-plane --timeout=600s"
+  register: control_plane_pods_ready
+
+- name: Installing network plugin
+  shell: "kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml"
+
+- name: Wait for control-plane pods become ready
+  shell: "kubectl wait --namespace=kube-flannel --for=condition=Ready pods --all --timeout=600s"
+  register: flannel_pods_ready
+
+- name: Wait for all k8s nodes to be ready
+  shell: "kubectl wait --for=condition=Ready nodes --all --timeout=600s"
+  register: nodes_ready
 
 - name: Getting join command from the master node
   shell: kubeadm token create --print-join-command
   register: join_command
- 
+
 - name: Setting join command for k8s_worker role
   add_host:
     name: k8s_master
@@ -48,6 +73,7 @@
     owner: root
     group: root
     mode: '0644'
+    remote_src: yes
 
 - name: Replace local ip in kubectl admin.conf to public ip
   replace:

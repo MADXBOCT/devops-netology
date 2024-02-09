@@ -4,7 +4,7 @@ provider "yandex" {
 
 #image
 data "yandex_compute_image" "ubuntu_image" {
-  family = "ubuntu-2204-lts"
+  family = "ubuntu-2004-lts"
 }
 
 resource "time_sleep" "wait_many_seconds" {
@@ -13,7 +13,8 @@ resource "time_sleep" "wait_many_seconds" {
 }
 
 resource "null_resource" "check_ssh" {
-  depends_on = [time_sleep.wait_many_seconds]
+ depends_on = [time_sleep.wait_many_seconds]
+  // depends_on = [yandex_compute_instance_group.k8s-master]
 
     provisioner "remote-exec" {
     inline = ["echo 'SSH is up!'"]
@@ -22,7 +23,7 @@ resource "null_resource" "check_ssh" {
       type        = "ssh"
       user        = var.SSH_USER
       private_key = file(var.PATH_TO_PRIVATE_KEY)
-      timeout = "5m"
+      timeout = "10m"
     }
   }
 

@@ -32,3 +32,12 @@
     sysctl_set: true
     state: present
     reload: true
+
+- name: Disabling swap on hosts
+  shell: swapoff -a
+
+- name: Disabling swap from fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
