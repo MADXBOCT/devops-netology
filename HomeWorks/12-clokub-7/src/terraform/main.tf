@@ -9,7 +9,7 @@ data "yandex_compute_image" "ubuntu_image" {
 }
 
 resource "yandex_iam_service_account" "sa" {
-  name = "robot"
+  name = "robot3"
 }
 
 resource "yandex_iam_service_account" "sa2" {

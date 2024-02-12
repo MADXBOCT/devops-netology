@@ -5,7 +5,6 @@
   become: yes
 
   roles:
-#  - docker
   - k8s
 
 - name: Configure k8s master
@@ -16,3 +15,10 @@
   roles:
   - k8s_master
 
+- name: Configure k8s workers
+  hosts: k8s_workers
+  remote_user: ubuntu
+  become: yes
+
+  roles:
+  - k8s_worker
