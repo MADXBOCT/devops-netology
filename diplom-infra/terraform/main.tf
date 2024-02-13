@@ -14,7 +14,7 @@ resource "time_sleep" "wait_many_seconds" {
 
 resource "time_sleep" "wait_many_seconds2" {
   depends_on = [yandex_compute_instance_group.k8s-worker]
-  create_duration = "120s"
+  create_duration = "600s"
 }
 
 resource "null_resource" "check_ssh" {
@@ -71,10 +71,16 @@ resource "local_file" "inventory" {
     # We use Force Color option because by default terrafrom output will be lack and white
     command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook k8s.yaml"
   }
+
 }
 
+# Check k8s is ready
 resource null_resource check_k8s_ready {
   depends_on = [local_file.inventory]
+
+  triggers = {
+    always_run = "${timestamp()}"
+  }
 
   provisioner "local-exec" {
     command = <<-EOT
@@ -82,17 +88,50 @@ resource null_resource check_k8s_ready {
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
+
+}
+
+# Deploy monitoring layer
+resource null_resource monitoring {
+  depends_on = [null_resource.check_k8s_ready]
+
+    provisioner "local-exec" {
+    working_dir = "${path.module}/../monitoring"
+    command = <<-EOT
+      kubectl apply --server-side -f manifests/setup
+      kubectl wait \
+	          --for condition=Established \
+	          --all CustomResourceDefinition \
+	          --namespace=monitoring
+      kubectl apply -f manifests/
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+
+}
+
+# Check k8s monitoring is ready
+resource null_resource check_k8s_mon_ready {
+  depends_on = [null_resource.monitoring]
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      kubectl wait --namespace=monitoring --for=condition=Ready pods --all --timeout=1200s
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+
 }
 
 # Deploy application layer
 resource null_resource deploy {
-  depends_on = [null_resource.check_k8s_ready]
+  depends_on = [null_resource.check_k8s_mon_ready]
 
   triggers = {
     always_run = "${timestamp()}"
   }
 
-  provisioner "local-exec" {
+provisioner "local-exec" {
     # Switching context to app manifest folder
     # Deploy everything and wait for wordpress deployment
     working_dir = "${path.module}/../app"

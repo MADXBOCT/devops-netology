@@ -109,7 +109,7 @@ resource "yandex_compute_instance_group" "k8s-worker" {
 
   scale_policy {
       fixed_scale {
-        size = 1
+        size = 2
 
       }
     }
