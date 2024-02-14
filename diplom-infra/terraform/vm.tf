@@ -62,13 +62,11 @@ resource "yandex_compute_instance_group" "k8s-master" {
     }
 }
 
-resource "yandex_compute_instance_group" "k8s-worker" {
-  name               = "k8s-worker"
-  service_account_id = "aje56burc53lo57paasf"
+resource "yandex_compute_instance" "k8s-worker" {
 
-  instance_template {
-    name = "k8s-worker-{instance.index}"
-    hostname = "k8s-worker-{instance.index}"
+  name     = "${terraform.workspace}-k8s-node${count.index + 1}"
+  hostname = "${terraform.workspace}-k8s-node${count.index + 1}"
+  count = 2
 
     platform_id = "standard-v2"
     resources {
@@ -91,8 +89,7 @@ resource "yandex_compute_instance_group" "k8s-worker" {
     }
 
     network_interface {
-      network_id = "${yandex_vpc_network.diplom-net.id}"
-      subnet_ids = ["${yandex_vpc_subnet.public1.id}","${yandex_vpc_subnet.public2.id}","${yandex_vpc_subnet.public3.id}"]
+      subnet_id = "${yandex_vpc_subnet.public1.id}"
       nat        = true
     }
 
@@ -102,26 +99,19 @@ resource "yandex_compute_instance_group" "k8s-worker" {
 
     labels = {
       name = "k8s"
-      role = "master"
+      role = "worker"
     }
 
+
+   provisioner "remote-exec" {
+    inline = ["echo 'SSH is up!'"]
+    connection {
+      host        = self.network_interface[0].nat_ip_address
+      type        = "ssh"
+      user        = var.SSH_USER
+      private_key = file(var.PATH_TO_PRIVATE_KEY)
+    }
   }
 
-  scale_policy {
-      fixed_scale {
-        size = 2
 
-      }
-    }
-
-  allocation_policy {
-      zones = ["ru-central1-b", "ru-central1-a", "ru-central1-d"]
-    }
-
-  deploy_policy {
-      max_unavailable = 1
-      max_creating    = 2
-      max_expansion   = 1
-      max_deleting    = 2
-    }
 }
