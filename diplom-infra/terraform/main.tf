@@ -1,43 +1,20 @@
+#default zone in case of something
 provider "yandex" {
-  //zone = "ru-central1-b"
+  zone = "ru-central1-b"
 }
 
-#image
+#set image
 data "yandex_compute_image" "ubuntu_image" {
   family = "ubuntu-2004-lts"
 }
 
-#resource "time_sleep" "wait_many_seconds" {
-#  depends_on = [yandex_compute_instance_group.k8s-master]
-#  create_duration = "120s"
-#}
-
-#resource "null_resource" "check_ssh" {
-# depends_on = [time_sleep.wait_many_seconds]
-#  // depends_on = [yandex_compute_instance_group.k8s-master]
-#
-#  provisioner "remote-exec" {
-#    inline = ["echo 'SSH is up!'"]
-#    connection {
-#      host        = element(yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].nat_ip_address, 0)
-#      type        = "ssh"
-#      user        = var.SSH_USER
-#      private_key = file(var.PATH_TO_PRIVATE_KEY)
-#      timeout = "10m"
-#    }
-#  }
-#
-#}
-
+#Prepare inventory for Ansible
 resource "local_file" "inventory" {
-  //depends_on = [yandex_compute_instance.k8s-worker,null_resource.check_ssh]
-  depends_on = [yandex_compute_instance.k8s-master,yandex_compute_instance.k8s-worker]
-  //depends_on = [yandex_compute_instance.k8s-master]
   content = templatefile("${path.module}/templates/inventory.tpl",
     {
-      #k8s_masters = yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].nat_ip_address
       k8s_masters = yandex_compute_instance.k8s-master[*].network_interface[0].nat_ip_address
-      k8s_workers = yandex_compute_instance.k8s-worker[*].network_interface[0].nat_ip_address
+      k8s_workers1 = yandex_compute_instance.k8s-worker1[*].network_interface[0].nat_ip_address
+      k8s_workers2 = yandex_compute_instance.k8s-worker2[*].network_interface[0].nat_ip_address
       path_to_private_key = var.PATH_TO_PRIVATE_KEY
     }
   )
@@ -104,7 +81,7 @@ resource null_resource check_k8s_mon_ready {
 
 }
 
-# Deploy application layer
+#Initial deploy of application layer
 resource null_resource deploy {
   depends_on = [null_resource.check_k8s_mon_ready]
 
@@ -113,8 +90,6 @@ resource null_resource deploy {
   }
 
 provisioner "local-exec" {
-    # Switching context to app manifest folder
-    # Deploy everything and wait for wordpress deployment
     working_dir = "${path.module}/../app"
     command = <<-EOT
       kubectl apply -f namespace.yaml

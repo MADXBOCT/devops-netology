@@ -129,7 +129,7 @@ resource "yandex_compute_instance_group" "k8s-worker" {
     inline = ["echo 'SSH is up!'"]
     connection {
       //host        = element(yandex_compute_instance_group.k8s-worker.instances[*].network_interface[0].nat_ip_address, 0)
-      host        = element(yandex_compute_instance_group.k8s-worker.instances[*].network_interface[0].nat_ip_address, 0)
+      host        = self.instance_template[*].network_interface[0].nat_ip_address
       type        = "ssh"
       user        = var.SSH_USER
       private_key = file(var.PATH_TO_PRIVATE_KEY)

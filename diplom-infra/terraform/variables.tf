@@ -15,19 +15,3 @@ variable "SSH_USER" {
   default     = "ubuntu"
   type        = string
 }
-
-variable "zones_master" {
-  type    = list(string)
-  default = ["ru-central1-a"]
-}
-
-variable "zones_worker" {
-  type    = list(string)
-  default = ["ru-central1-b", "ru-central1-d"]
-}
-
-variable "cidr" {
-  type = list(string)
-  default = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
-
-}
