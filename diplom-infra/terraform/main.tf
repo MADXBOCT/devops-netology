@@ -8,8 +8,14 @@ data "yandex_compute_image" "ubuntu_image" {
   family = "ubuntu-2004-lts"
 }
 
+#resource "time_sleep" "wait_many_seconds" {
+#  depends_on = [yandex_compute_instance.k8s-master,yandex_compute_instance.k8s-worker1,yandex_compute_instance.k8s-worker2]
+#  create_duration = "60s"
+#}
+
 #Prepare inventory for Ansible
 resource "local_file" "inventory" {
+  //depends_on = [time_sleep.wait_many_seconds]
   content = templatefile("${path.module}/templates/inventory.tpl",
     {
       k8s_masters = yandex_compute_instance.k8s-master[*].network_interface[0].nat_ip_address

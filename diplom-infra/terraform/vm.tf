@@ -11,18 +11,18 @@ zone = "ru-central1-a"
     resources {
       memory        = 2
       cores         = 2
-      core_fraction = 5
+      core_fraction = 100
     }
 
     scheduling_policy {
-      preemptible = "true"
+      preemptible = "false"
     }
 
     boot_disk {
       mode = "READ_WRITE"
       initialize_params {
         image_id = data.yandex_compute_image.ubuntu_image.id
-        size     = 10
+        size     = 20
         type = "network-ssd"
       }
     }
@@ -42,16 +42,16 @@ zone = "ru-central1-a"
     }
 
 
-   provisioner "remote-exec" {
-    inline = ["echo 'SSH is up!'"]
-    connection {
-      host        = self.network_interface[0].nat_ip_address
-      type        = "ssh"
-      user        = var.SSH_USER
-      private_key = file(var.PATH_TO_PRIVATE_KEY)
-      timeout = "20m"
-    }
-  }
+#   provisioner "remote-exec" {
+#    inline = ["echo 'SSH is up!'"]
+#    connection {
+#      host        = self.network_interface[0].nat_ip_address
+#      type        = "ssh"
+#      user        = var.SSH_USER
+#      private_key = file(var.PATH_TO_PRIVATE_KEY)
+#      timeout = "20m"
+#    }
+#  }
 
 
 }
@@ -69,7 +69,7 @@ zone = "ru-central1-b"
     resources {
       memory        = 2
       cores         = 2
-      core_fraction = 5
+      core_fraction = 100
     }
 
     scheduling_policy {
@@ -80,7 +80,7 @@ zone = "ru-central1-b"
       mode = "READ_WRITE"
       initialize_params {
         image_id = data.yandex_compute_image.ubuntu_image.id
-        size     = 10
+        size     = 20
         type = "network-ssd"
       }
     }
@@ -100,16 +100,16 @@ zone = "ru-central1-b"
     }
 
 
-   provisioner "remote-exec" {
-    inline = ["echo 'SSH is up!'"]
-    connection {
-      host        = self.network_interface[0].nat_ip_address
-      type        = "ssh"
-      user        = var.SSH_USER
-      private_key = file(var.PATH_TO_PRIVATE_KEY)
-      timeout = "20m"
-    }
-  }
+#   provisioner "remote-exec" {
+#    inline = ["echo 'SSH is up!'"]
+#    connection {
+#      host        = self.network_interface[0].nat_ip_address
+#      type        = "ssh"
+#      user        = var.SSH_USER
+#      private_key = file(var.PATH_TO_PRIVATE_KEY)
+#      timeout = "20m"
+#    }
+#  }
 
 
 }
@@ -127,7 +127,7 @@ zone = "ru-central1-d"
     resources {
       memory        = 2
       cores         = 2
-      core_fraction = 5
+      core_fraction = 100
     }
 
     scheduling_policy {
@@ -138,7 +138,7 @@ zone = "ru-central1-d"
       mode = "READ_WRITE"
       initialize_params {
         image_id = data.yandex_compute_image.ubuntu_image.id
-        size     = 10
+        size     = 20
         type = "network-ssd"
       }
     }
@@ -158,16 +158,16 @@ zone = "ru-central1-d"
     }
 
 
-   provisioner "remote-exec" {
-    inline = ["echo 'SSH is up!'"]
-    connection {
-      host        = self.network_interface[0].nat_ip_address
-      type        = "ssh"
-      user        = var.SSH_USER
-      private_key = file(var.PATH_TO_PRIVATE_KEY)
-      timeout = "20m"
-    }
-  }
+#   provisioner "remote-exec" {
+#    inline = ["echo 'SSH is up!'"]
+#    connection {
+#      host        = self.network_interface[0].nat_ip_address
+#      type        = "ssh"
+#      user        = var.SSH_USER
+#      private_key = file(var.PATH_TO_PRIVATE_KEY)
+#      timeout = "20m"
+#    }
+#  }
 
 
 }

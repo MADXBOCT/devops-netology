@@ -51,7 +51,7 @@ resource "yandex_compute_instance_group" "k8s-master" {
     }
 
   allocation_policy {
-      zones = ["ru-central1-b", "ru-central1-a", "ru-central1-d"]
+      zones = ["ru-central1-a"]
     }
 
   deploy_policy {
@@ -115,7 +115,7 @@ resource "yandex_compute_instance_group" "k8s-worker" {
     }
 
   allocation_policy {
-      zones = ["ru-central1-b", "ru-central1-a", "ru-central1-d"]
+      zones = ["ru-central1-b", "ru-central1-d"]
     }
 
   deploy_policy {
@@ -124,17 +124,5 @@ resource "yandex_compute_instance_group" "k8s-worker" {
       max_expansion   = 1
       max_deleting    = 2
     }
-
-     provisioner "remote-exec" {
-    inline = ["echo 'SSH is up!'"]
-    connection {
-      //host        = element(yandex_compute_instance_group.k8s-worker.instances[*].network_interface[0].nat_ip_address, 0)
-      host        = self.instance_template[*].network_interface[0].nat_ip_address
-      type        = "ssh"
-      user        = var.SSH_USER
-      private_key = file(var.PATH_TO_PRIVATE_KEY)
-      timeout = "10m"
-    }
-  }
 
 }
