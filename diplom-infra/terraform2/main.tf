@@ -34,11 +34,7 @@ resource "local_file" "inventory" {
 resource null_resource check_k8s_ready {
   depends_on = [local_file.inventory]
 
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-
-  provisioner "local-exec" {
+    provisioner "local-exec" {
     command = <<-EOT
       kubectl wait --for=condition=Ready nodes --all --timeout=600s
     EOT
@@ -93,7 +89,7 @@ provisioner "local-exec" {
     working_dir = "${path.module}/../app"
     command = <<-EOT
       kubectl apply -f namespace.yaml
-      kubectl apply -f pod-hello-world.yaml
+      kubectl apply -f pod-hello-world2.yaml
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
