@@ -56,6 +56,7 @@ resource null_resource monitoring {
 	          --all CustomResourceDefinition \
 	          --namespace=monitoring
       kubectl apply -f manifests/
+      kubectl apply -f pub-grafana-test.yaml
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
@@ -79,11 +80,7 @@ resource null_resource check_k8s_mon_ready {
 resource null_resource deploy {
   depends_on = [null_resource.check_k8s_mon_ready]
 
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-
-provisioner "local-exec" {
+ provisioner "local-exec" {
     # Switching context to app manifest folder
     # Deploy everything and wait for wordpress deployment
     working_dir = "${path.module}/../app"
