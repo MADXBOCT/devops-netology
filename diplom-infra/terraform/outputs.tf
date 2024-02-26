@@ -1,14 +1,9 @@
-#output "external_ip" {
-# value = yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].nat_ip_address
-#}
-#
-#output "internal_ip" {
-# value = yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].ip_address
-#}
-
-output "external_ip" {
- value = yandex_compute_instance.k8s-master[*].network_interface[0].nat_ip_address
+output "grafana_URL" {
+ description = "IP Grafana access"
+ value = "http://${element(yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].nat_ip_address, 0)}:30010"
 }
-output "internal_ip" {
- value = yandex_compute_instance.k8s-master[*].network_interface[0].ip_address
+
+output "app_URL"  {
+ description = "Appliction access"
+ value = "http://${yandex_vpc_address.addr-app.external_ipv4_address[0].address}"
 }

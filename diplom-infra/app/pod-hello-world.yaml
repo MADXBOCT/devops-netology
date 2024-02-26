@@ -1,64 +1,47 @@
+kind: Namespace
 apiVersion: v1
-kind: Pod
+metadata:
+  name: app
+  labels:
+    name: app
+
+---
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: hello-world
   namespace: app
+  labels:
+    app.kubernetes.io/name: hello-world-app
 spec:
-  containers:
-  - name: hello-world
-    image: registry.gitlab.com/madxboct/diplom-app/python-web:latest
-    ports:
-    - containerPort: 80
-      name: http-web-svc
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hello-world-svc
-  namespace: app
-spec:
+  replicas: 2
   selector:
-    app.kubernetes.io/name: hello-world
-  ports:
-    - name: hello-world-port
-      protocol: TCP
-      port: 9001
-      targetPort: http-web-svc
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: hello-world-ingress
-  namespace: app
-#  annotations:
-#    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-#  ingressClassName: nginx-example
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Exact
-        backend:
-          service:
-            name: hello-world-svc
-            port:
-              number: 9001
+    matchLabels:
+      app.kubernetes.io/name: hello-world-app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hello-world-app
+    spec:
+      containers:
+      - name: nginx
+        image: registry.gitlab.com/madxboct/diplom-app/python-web:latest
+        ports:
+        - containerPort: 80
+          name: http-web-svc
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-node-service
+  name: hello-world-app-svc-node
   namespace: app
 spec:
   type: NodePort
   selector:
-    app.kubernetes.io/name: hello-world
+    app.kubernetes.io/name: hello-world-app
   ports:
-    - name: hello-world-node-port
+    - name: node-tcp-app
       port: 9001
       targetPort: http-web-svc
-      nodePort: 30008
+      nodePort: 30007

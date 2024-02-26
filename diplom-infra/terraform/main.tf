@@ -1,26 +1,18 @@
-#default zone in case of something
 provider "yandex" {
   zone = "ru-central1-b"
 }
 
-#set image
+#image
 data "yandex_compute_image" "ubuntu_image" {
   family = "ubuntu-2004-lts"
 }
 
-#resource "time_sleep" "wait_many_seconds" {
-#  depends_on = [yandex_compute_instance.k8s-master,yandex_compute_instance.k8s-worker1,yandex_compute_instance.k8s-worker2]
-#  create_duration = "60s"
-#}
-
-#Prepare inventory for Ansible
 resource "local_file" "inventory" {
-  //depends_on = [time_sleep.wait_many_seconds]
+  depends_on = [yandex_compute_instance_group.k8s-master,yandex_compute_instance_group.k8s-worker]
   content = templatefile("${path.module}/templates/inventory.tpl",
     {
-      k8s_masters = yandex_compute_instance.k8s-master[*].network_interface[0].nat_ip_address
-      k8s_workers1 = yandex_compute_instance.k8s-worker1[*].network_interface[0].nat_ip_address
-      k8s_workers2 = yandex_compute_instance.k8s-worker2[*].network_interface[0].nat_ip_address
+      k8s_masters = yandex_compute_instance_group.k8s-master.instances[*].network_interface[0].nat_ip_address
+      k8s_workers = yandex_compute_instance_group.k8s-worker.instances[*].network_interface[0].nat_ip_address
       path_to_private_key = var.PATH_TO_PRIVATE_KEY
     }
   )
@@ -42,11 +34,7 @@ resource "local_file" "inventory" {
 resource null_resource check_k8s_ready {
   depends_on = [local_file.inventory]
 
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-
-  provisioner "local-exec" {
+    provisioner "local-exec" {
     command = <<-EOT
       kubectl wait --for=condition=Ready nodes --all --timeout=600s
     EOT
@@ -68,6 +56,7 @@ resource null_resource monitoring {
 	          --all CustomResourceDefinition \
 	          --namespace=monitoring
       kubectl apply -f manifests/
+      kubectl apply -f pub-grafana.yaml
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
@@ -87,18 +76,15 @@ resource null_resource check_k8s_mon_ready {
 
 }
 
-#Initial deploy of application layer
+# Deploy application layer
 resource null_resource deploy {
   depends_on = [null_resource.check_k8s_mon_ready]
 
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-
-provisioner "local-exec" {
+ provisioner "local-exec" {
+    # Switching context to app manifest folder
+    # Deploy everything and wait for wordpress deployment
     working_dir = "${path.module}/../app"
     command = <<-EOT
-      kubectl apply -f namespace.yaml
       kubectl apply -f pod-hello-world.yaml
     EOT
     interpreter = ["/bin/bash", "-c"]

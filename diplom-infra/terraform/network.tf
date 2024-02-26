@@ -26,3 +26,11 @@ resource "yandex_vpc_subnet" "public3" {
   network_id     = "${yandex_vpc_network.diplom-net.id}"
 
 }
+
+resource "yandex_vpc_address" "addr-app" {
+  name = "addr-app"
+
+  external_ipv4_address {
+    zone_id = "ru-central1-a"
+  }
+}
