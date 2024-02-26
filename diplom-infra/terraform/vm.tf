@@ -98,7 +98,7 @@ resource "yandex_compute_instance_group" "k8s-worker" {
     }
 
     metadata = {
-      ssh-keys = "ubuntu:${file("~/.ssh/cicd.pub")}"
+      ssh-keys = "${var.SSH_USER}:${file(var.PATH_TO_PUBLIC_KEY)}"
     }
 
     labels = {

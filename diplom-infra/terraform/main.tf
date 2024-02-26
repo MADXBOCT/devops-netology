@@ -7,6 +7,7 @@ data "yandex_compute_image" "ubuntu_image" {
   family = "ubuntu-2004-lts"
 }
 
+#Create inventory file and run ansible
 resource "local_file" "inventory" {
   depends_on = [yandex_compute_instance_group.k8s-master,yandex_compute_instance_group.k8s-worker]
   content = templatefile("${path.module}/templates/inventory.tpl",
@@ -19,12 +20,8 @@ resource "local_file" "inventory" {
   filename = "${path.module}/../ansible/inventory"
 
 
-  # As soon inventory file is ready we can call Ansible playbook to configure k8s cluster
-  provisioner "local-exec" {
-    # Switching context to ansible folder
+    provisioner "local-exec" {
     working_dir = "${path.module}/../ansible/"
-    # Run ansible-playbook, it will use freshly created inventory file
-    # We use Force Color option because by default terrafrom output will be lack and white
     command = "ANSIBLE_FORCE_COLOR=1 ansible-playbook k8s.yaml"
   }
 
@@ -81,8 +78,6 @@ resource null_resource deploy {
   depends_on = [null_resource.check_k8s_mon_ready]
 
  provisioner "local-exec" {
-    # Switching context to app manifest folder
-    # Deploy everything and wait for wordpress deployment
     working_dir = "${path.module}/../app"
     command = <<-EOT
       kubectl apply -f pod-hello-world.yaml
