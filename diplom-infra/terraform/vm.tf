@@ -1,3 +1,4 @@
+#Create group of masters, 1vm
 resource "yandex_compute_instance_group" "k8s-master" {
   name               = "k8s-master"
   service_account_id = "aje56burc53lo57paasf"
@@ -63,6 +64,7 @@ resource "yandex_compute_instance_group" "k8s-master" {
     }
 }
 
+#Create group of workers, 2vm
 resource "yandex_compute_instance_group" "k8s-worker" {
   name               = "k8s-worker"
   service_account_id = "aje56burc53lo57paasf"

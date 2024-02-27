@@ -1,3 +1,4 @@
+#Create target group - worker nodes
 resource "yandex_lb_target_group" "tg-k8s-wk-nodes" {
   name = "tg-k8s-wk-nodes"
 
@@ -14,6 +15,7 @@ resource "yandex_lb_target_group" "tg-k8s-wk-nodes" {
   }
 }
 
+#Create load balancer for app traffic
 resource "yandex_lb_network_load_balancer" "app-lb" {
   name = "app-lb"
 
