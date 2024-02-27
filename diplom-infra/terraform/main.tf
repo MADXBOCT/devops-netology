@@ -73,7 +73,7 @@ resource null_resource check_k8s_mon_ready {
 
 }
 
-# Deploy gitlab agent
+# Deploy gitlab agent (for ci/cd)
 resource null_resource deploy-gitlab-agent {
  depends_on = [null_resource.check_k8s_ready]
  provisioner "local-exec" {
@@ -92,7 +92,7 @@ resource null_resource deploy-gitlab-agent {
   }
 }
 
-# Deploy application layer
+# Deploy application layer (initial deploy)
 resource null_resource deploy {
   depends_on = [null_resource.check_k8s_mon_ready]
 
