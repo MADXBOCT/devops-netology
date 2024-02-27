@@ -73,6 +73,25 @@ resource null_resource check_k8s_mon_ready {
 
 }
 
+# Deploy gitlab agent
+resource null_resource deploy-gitlab-agent {
+ depends_on = [null_resource.check_k8s_ready]
+ provisioner "local-exec" {
+    working_dir = "${path.module}/../app"
+    command = <<-EOT
+      helm repo add gitlab https://charts.gitlab.io
+      helm repo update
+      helm upgrade --install diplom-app gitlab/gitlab-agent \
+        --namespace gitlab-agent-diplom-app \
+        --create-namespace \
+        --set image.tag=v16.10.0-rc1 \
+        --set config.token=$GITLAB_AGENT_TOKEN \
+        --set config.kasAddress=wss://kas.gitlab.com
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
 # Deploy application layer
 resource null_resource deploy {
   depends_on = [null_resource.check_k8s_mon_ready]
